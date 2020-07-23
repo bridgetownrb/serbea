@@ -7,6 +7,8 @@ Make of that what you will.
 Coming soon…
 
 ```ruby
+# example.berb
+
 {% wow = capture do %}
   This is {{ "amazing" + "!" | upcase }}
 {% end.each_char.reduce("") do |newstr, c|
