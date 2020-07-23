@@ -9,7 +9,7 @@ Coming soon…
 ```ruby
 {% wow = capture do %}
   This is {{ "amazing" + "!" | upcase }}
-{% end.each_char.reduce("") do |c, newstr|
+{% end.each_char.reduce("") do |newstr, c|
     newstr += " #{c}"
    end.strip %}
 
