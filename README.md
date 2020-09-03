@@ -1,13 +1,13 @@
-# BERBARA: But ERB is Actually Really Awesome
+# Serbea: Similar to ERB, Except Awesomer
 
-Berbara is the love child of Liquid, Nunjucks, and ERB.
+Serbea is the love child of Liquid, Nunjucks, and ERB.
 
 Make of that what you will.
 
 Coming soon…
 
 ```ruby
-# example.berb
+# example.serb
 
 {% wow = capture do %}
   This is {{ "amazing" + "!" | upcase }}
