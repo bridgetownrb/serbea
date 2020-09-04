@@ -16,4 +16,17 @@ Coming soon…
    end.strip %}
 
 {{ wow | prepend: "OMG! " }}
+
+<hr />
+
+<p>
+  {%
+    macro :multiply_array do |input, multiply_by = 2|
+      input.map do |i|
+        i.to_i * multiply_by
+      end
+    end
+  %}
+  {{ [1,3,6, "9"] | multiply_array: 10 }}
+</p>
 ```
