@@ -33,6 +33,6 @@ Coming soon…
 <hr />
 
 {%>= form classname: "checkout" do |f| %}
-  {%= f.input :first_name %}
+  {{ f.input(:first_name) }}
 {%> end %}
 ```
