@@ -27,7 +27,8 @@ Coming soon…
       end
     end
   %}
-  {{ [1,3,6, "9"] | multiply_array: 10 }}
+
+  Multiply! {{ [1,3,6, "9"] | multiply_array: 10 }}
 </p>
 
 <hr />
