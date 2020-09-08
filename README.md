@@ -37,3 +37,12 @@ Coming soon…
   {{ f.input :first_name, required: true | errors: error_messages }}
 {%> end %}
 ```
+
+```erb
+{%>= render "box" do %}
+  This is **dope!**
+  {%>= render "card", title: "Nifty!" do %}
+    So great.
+  {%> end %}
+{%> end %}
+```
