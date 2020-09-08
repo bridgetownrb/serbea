@@ -30,3 +30,9 @@ Coming soon…
   {{ [1,3,6, "9"] | multiply_array: 10 }}
 </p>
 ```
+
+<hr />
+
+{%>= form classname: "checkout" do |f| %}
+  {%= f.input :first_name %}
+{%> end %}
