@@ -16,9 +16,9 @@ Coming soon…
    end.strip %}
 
 {{ wow | prepend: "OMG! " }}
+```
 
-<hr />
-
+```ruby
 <p>
   {%
     helper :multiply_array do |input, multiply_by = 2|
@@ -30,15 +30,15 @@ Coming soon…
 
   Multiply! {{ [1,3,6, "9"] | multiply_array: 10 }}
 </p>
+```
 
-<hr />
-
+```ruby
 {%>= form classname: "checkout" do |f| %}
   {{ f.input :first_name, required: true | errors: error_messages }}
 {%> end %}
 ```
 
-```erb
+```ruby
 {%>= render "box" do %}
   This is **dope!**
   {%>= render "card", title: "Nifty!" do %}
