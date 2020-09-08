@@ -21,7 +21,7 @@ Coming soon…
 
 <p>
   {%
-    macro :multiply_array do |input, multiply_by = 2|
+    helper :multiply_array do |input, multiply_by = 2|
       input.map do |i|
         i.to_i * multiply_by
       end
