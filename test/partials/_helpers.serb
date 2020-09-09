@@ -1,0 +1,13 @@
+{%
+  helper :multiply_array do |input, multiply_by = 2|
+    input.map do |i|
+      i.to_i * multiply_by
+    end
+  end
+%}
+{%
+  helper :goober do |content="", &block|
+    content = block.call if block
+    "Totally grand! #{content.split(',').join(';').split(' ').join(',')} Yay!"
+  end
+%}

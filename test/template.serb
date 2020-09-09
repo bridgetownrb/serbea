@@ -1,0 +1,93 @@
+---
+layout: page
+title: I'm a title!
+---
+
+This is {{ "totally great" }}
+Um… {% so_far = "so good" %}
+{% error_messages = {first_name: "Bad!"} %}
+
+{%
+  for i in [1,3,5,7]
+    %}{{ i }}{%
+  end
+%}
+Whoa
+
+Here we go! {{ so_far | upcase | foo: "WILD", bar: baz | finalize }} Yay! {{ 123 | to_f }} Done.
+
+---
+
+{% raw %}
+```ruby
+{%>= form classes: "raw" do %}
+  <input /> {{ blah blah | blee }}
+{%> end %}
+```
+{% endraw %}
+
+---
+
+{%>=  form(
+        classname: "checkoout"
+      ) do |f| %}
+  {{ f.input :first_name, required: true | errors: error_messages }}
+{%> end %}
+
+---
+
+{%= "HAHA" if defined?(groovy) %}
+
+{% groovy = "   groovy!   " %}
+
+{%= "HAHA" if defined?(groovy) %}
+
+---
+
+{{ "Groovy! #{groovy.strip} :)" | prepend: "Groovy? " }}
+
+---
+
+<input value="{{ da_value | escape }}" />
+{% has_selected_variant = groovy != nil ? true : false %}
+Selected? {{ has_selected_variant }}
+
+---
+
+{% wow = capture do %}
+  This is {{ "amazing" + "!" | upcase }}
+{% end.each_char.reduce("") do |newstr, c|
+    newstr += " #{c}"
+   end.strip %}
+
+{% nice = "Whoa " %}
+{{ wow | prepend: "OMG! " | missing_filter | prepend: *nice }}
+
+---
+
+{%>= render "weee/wooo", cool: "beans" do %}
+  This is **dope!**
+  {%>= render "weee/wooo", cool: "cats" do %}
+    So great.
+  {%> end %}
+{%> end %}
+
+{%= render "weee/wooo", cool: "boxess" %}
+
+{% import "helpers" %}
+<p>
+  Multiply! {{ [1,3,6, "9"] | multiply_array: 10 }}
+</p>
+
+{{ partial "errors", errors: error_messages | upcase }}
+
+---
+{%>= goober do %}
+  Is this a thing??
+  {%>= goober do %}
+    I hope so!
+  {%> end %}
+  Wee!
+{%> end %}
+
+{{ goober "Foo" }}
