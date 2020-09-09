@@ -35,7 +35,7 @@ Coming soon…
 ```ruby
 {%>= form classname: "checkout" do |f| %}
   {{ f.input :first_name, required: true | errors: error_messages }}
-{%|> end %}
+{%=> end %}
 ```
 
 ```ruby
@@ -43,6 +43,6 @@ Coming soon…
   This is **dope!**
   {%>= render "card", title: "Nifty!" do %}
     So great.
-  {%|> end %}
-{%|> end %}
+  {%=> end %}
+{%=> end %}
 ```
