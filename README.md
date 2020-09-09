@@ -47,7 +47,7 @@ Coming soon…
 {%>  end %}
 ```
 
-```ruby
+```html
 # Works with ViewComponent!
 
 {%>= render(Theme::DropdownComponent.new(name: "banner", label: "Banners")) do |dropdown| %}
