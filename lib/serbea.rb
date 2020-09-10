@@ -4,10 +4,10 @@ require 'erubi/capture_end'
 require "ostruct"
 
 module SerbeaHelpers
-  def capture
+  def capture(obj=nil)
     previous_buffer_state = @_erbout
     @_erbout = +""
-    result = yield
+    result = obj ? yield(obj) : yield
     @_erbout = previous_buffer_state
   
     result.respond_to?(:html_safe) ? result.html_safe : result
