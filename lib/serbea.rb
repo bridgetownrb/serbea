@@ -130,6 +130,8 @@ class SerbeaEngine < Erubi::CaptureEndEngine
       if code.length > 0
         processed_filters = false
 
+        code = code.gsub('\|', "__PIPE_C__")
+
         subs = code.gsub(/ *\| +(.*?) ([^|}]*)/) do
           args = $2
           args = nil if args.strip == ""
@@ -139,9 +141,8 @@ class SerbeaEngine < Erubi::CaptureEndEngine
         end
 
         pipeline_suffix = processed_filters ? ") %}" : ")) %}"
-        subs = subs.sub("{{", "{%= pipeline(self, (").sub("}}", pipeline_suffix)
 
-        buff << subs
+        buff << subs.sub("{{", "{%= pipeline(self, (").sub("}}", pipeline_suffix).gsub("__PIPE_C__", '\|')
       end
     end
 

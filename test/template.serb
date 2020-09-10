@@ -44,7 +44,7 @@ Here we go! {{ so_far | upcase | foo: "WILD", bar: baz | finalize }} Yay! {{ 123
 
 ---
 
-{{ "Groovy! #{groovy.strip} :)" | prepend: "Groovy? " }}
+{{ "Groovy! \| #{groovy.strip} :)" | prepend: "Groovy? " }}
 
 ---
 
