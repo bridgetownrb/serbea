@@ -43,8 +43,8 @@ Coming soon…
   This is **dope!**
   {%:= render "card", title: "Nifty!" do %}
     So great.
-  {%:  end %}
-{%:  end %}
+  {%: end %}
+{%: end %}
 ```
 
 ```html
