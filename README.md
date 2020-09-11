@@ -33,29 +33,29 @@ Coming soon…
 ```
 
 ```ruby
-{%>= form classname: "checkout" do |f| %}
+{%:= form classname: "checkout" do |f| %}
   {{ f.input :first_name, required: true | errors: error_messages }}
-{%> end %}
+{%: end %}
 ```
 
 ```ruby
-{%>= render "box" do %}
+{%:= render "box" do %}
   This is **dope!**
-  {%>= render "card", title: "Nifty!" do %}
+  {%:= render "card", title: "Nifty!" do %}
     So great.
-  {%>  end %}
-{%>  end %}
+  {%:  end %}
+{%:  end %}
 ```
 
 ```html
 # Works with ViewComponent!
 
-{%>= render(Theme::DropdownComponent.new(name: "banner", label: "Banners")) do |dropdown| %}
+{%:= render(Theme::DropdownComponent.new(name: "banner", label: "Banners")) do |dropdown| %}
   {% RegistryTheme::BANNERS.each do |banner| %}
     {% dropdown.slot(:item, value: banner) do %}
       <img src="/themes/{{ banner | parameterize: separator: "_" }}.jpg">
       <strong>{{ banner }}</strong>
     {% end %}
   {% end %}
-{%> end %}
+{%: end %}
 ```
