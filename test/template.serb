@@ -20,19 +20,19 @@ Here we go! {{ so_far | upcase | foo: "WILD", bar: baz | finalize }} Yay! {{ 123
 
 {% raw %}
 ```ruby
-{%>= form classes: "raw" do %}
+{%:= form classes: "raw" do %}
   <input /> {{ blah blah | blee }}
-{%> end %}
+{%: end %}
 ```
 {% endraw %}
 
 ---
 
-{%>=  form(
+{%:=  form(
         classname: "checkoout"
       ) do |f| %}
   {{ f.input :first_name, required: true | errors: error_messages }}
-{%> end %}
+{%: end %}
 
 ---
 
@@ -65,12 +65,12 @@ Selected? {{ has_selected_variant }}
 
 ---
 
-{%>= render "weee/wooo", cool: "beans" do %}
+{%:= render "weee/wooo", cool: "beans" do %}
   This is **dope!**
-  {%>= render "weee/wooo", cool: "cats" do %}
+  {%:= render "weee/wooo", cool: "cats" do %}
     So great.
-  {%> end %}
-{%> end %}
+  {%: end %}
+{%: end %}
 
 {%= render "weee/wooo", cool: "boxess" %}
 
@@ -82,12 +82,12 @@ Selected? {{ has_selected_variant }}
 {{ partial "errors", errors: error_messages | upcase }}
 
 ---
-{%>= goober do %}
+{%:= goober do %}
   Is this a thing??
-  {%>= goober do %}
+  {%:= goober do %}
     I hope so!
-  {%> end %}
+  {%: end %}
   Wee!
-{%> end %}
+{%: end %}
 
 {{ goober "Foo" }}

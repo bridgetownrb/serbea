@@ -80,7 +80,7 @@ class SerbeaEngine < Erubi::CaptureEndEngine
   end
 
   def initialize(input, properties={})
-    properties[:regexp] = /{%(\>?={1,2}|-|\#|%|\>)?(.*?)([-=])?%}([ \t]*\r?\n)?/m
+    properties[:regexp] = /{%(\:?={1,2}|-|\#|%|\:)?(.*?)([-=])?%}([ \t]*\r?\n)?/m
     properties[:strip_front_matter] = true unless properties.key?(:strip_front_matter)
     super process_serbea_input(input, properties), properties
   end
@@ -152,17 +152,17 @@ class SerbeaEngine < Erubi::CaptureEndEngine
 
   private
 
-  # Handle the <%>= and <%>== tags
+  # Handle the <%:= and <%:== tags
   # Carried over from the Erubi class but with changed indicators
   def handle(indicator, code, tailch, rspace, lspace)
     case indicator
-    when '>=', '>=='
+    when ':=', ':=='
       rspace = nil if tailch && !tailch.empty?
       add_text(lspace) if lspace
-      escape_capture = !((indicator == '>=') ^ @escape_capture)
+      escape_capture = !((indicator == ':=') ^ @escape_capture)
       src << "begin; (#{@bufstack} ||= []) << #{@bufvar}; #{@bufvar} = #{@bufval}; #{@bufstack}.last << #{@escapefunc if escape_capture}((" << code
       add_text(rspace) if rspace
-    when '>'
+    when ':'
       rspace = nil if tailch && !tailch.empty?
       add_text(lspace) if lspace
       result = @yield_returns_buffer ? " #{@bufvar}; " : ""
