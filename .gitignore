@@ -16,4 +16,3 @@ mkmf.log
 Gemfile.lock
 .bundle
 .ruby-version
-test_threads.rb
