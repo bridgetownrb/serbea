@@ -142,7 +142,7 @@ class SerbeaEngine < Erubi::CaptureEndEngine
 
         code = code.gsub('\|', "__PIPE_C__")
 
-        subs = code.gsub(/ *\| +(.*?) ([^|}]*)/) do
+        subs = code.gsub(/\s*\|\s+(.*?)\s([^|}]*)/) do
           args = $2
           args = nil if args.strip == ""
           prefix = processed_filters ? ")" : "))"
