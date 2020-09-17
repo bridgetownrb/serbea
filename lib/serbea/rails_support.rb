@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# copied from https://github.com/haml/haml/blob/main/lib/haml/plugin.rb
+# inspired by https://github.com/haml/haml/blob/main/lib/haml/plugin.rb
 module Serbea
 
   # This module makes Serbea work with Rails using the template handler API.
@@ -26,3 +26,7 @@ module Serbea
 end
 
 ActionView::Template.register_template_handler(:serb, Serbea::Plugin)
+
+Serbea::Pipeline.output_processor = lambda do |input|
+  input.html_safe? ? input : ActionController::Base.helpers.strip_tags(input)
+end

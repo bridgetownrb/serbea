@@ -29,6 +29,16 @@ end
 
 module Serbea
   class Pipeline
+    def self.output_processor=(processor)
+      @output_processor = processor
+    end
+    def self.output_processor
+      @output_processor ||= lambda do |input|
+        # no-op
+        input
+      end
+    end
+
     def initialize(context, value)
       @context = context
       @value = value
@@ -49,7 +59,7 @@ module Serbea
     end
 
     def to_s
-      @value.to_s
+      self.class.output_processor.call @value.to_s
     end
 
     def raise_on_missing_filters; false; end
