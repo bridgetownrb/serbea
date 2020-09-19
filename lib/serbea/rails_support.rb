@@ -8,7 +8,7 @@ module Serbea
     def handles_encoding?; true; end
 
     def compile(template, source)
-      "self.class.include(SerbeaHelpers)\n" + Tilt::SerbeaTemplate.new { source }.precompiled_template([])
+      "self.class.include(Serbea::Helpers);" + Tilt::SerbeaTemplate.new { source }.precompiled_template([])
     end
 
     def self.call(template, source = nil)

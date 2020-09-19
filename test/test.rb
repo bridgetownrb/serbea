@@ -1,7 +1,8 @@
-require "../lib/serbea"
+require "bundler"
+require "serbea"
 
 class SerbView
-  include SerbeaHelpers
+  include Serbea::Helpers
 
   attr_accessor :baz
 
@@ -73,11 +74,13 @@ class SerbView
     @_erbout = +""
     if (block)
       variables.merge!({content: yield})
+    elsif !variables.key?(:content)
+      variables.merge!({content: ""})
     end
     @_erbout = previous_buffer_state
 
     fake_tmpl = "aha! {{ content }} yes! cool {%= cool %}"
-    fake_tmpl += "{% if blah %}wee!{% end %}"
+    fake_tmpl += "{% if defined? blah %}wee!{% end %}"
     
     tmpl = Tilt::SerbeaTemplate.new { fake_tmpl }
 
