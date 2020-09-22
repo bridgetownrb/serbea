@@ -62,7 +62,7 @@ Coming soon…
 {%:= render(Theme::DropdownComponent.new(name: "banner", label: "Banners")) do |dropdown| %}
   {% RegistryTheme::BANNERS.each do |banner| %}
     {% dropdown.slot(:item, value: banner) do %}
-      <img src="/themes/{{ banner | parameterize: separator: "_" }}.jpg">
+      <img src="{{ banner | parameterize: separator: "_" | prepend: "/themes/" | append: ".jpg" }}">
       <strong>{{ banner }}</strong>
     {% end %}
   {% end %}
@@ -73,7 +73,7 @@ Coming soon…
 {%@ Theme::DropdownComponent name: "banner", label: "Banners" do |dropdown| %}
   {% RegistryTheme::BANNERS.each do |banner| %}
     {% dropdown.slot(:item, value: banner) do %}
-      <img src="/themes/{{ banner | parameterize: separator: "_" }}.jpg">
+      <img src="{{ banner | parameterize: separator: "_" | prepend: "/images/themes/" | append: ".jpg" }}">
       <strong>{{ banner }}</strong>
     {% end %}
   {% end %}
