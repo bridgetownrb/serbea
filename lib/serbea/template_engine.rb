@@ -1,6 +1,13 @@
 module Serbea
   class TemplateEngine < Erubi::CaptureEndEngine
     FRONT_MATTER_REGEXP = %r!\A(---\s*\n.*?\n?)^((---|\.\.\.)\s*$\n?)!m.freeze
+
+    def self.render_directive=(directive)
+      @render_directive = directive
+    end
+    def self.render_directive
+      @render_directive ||= "render"
+    end
   
     def self.has_yaml_header?(template)
       template.lines.first&.match? %r!\A---\s*\r?\n!
@@ -33,6 +40,7 @@ module Serbea
         end
       end
   
+      # Ensure the raw "tag" will strip out all ERB-style processing
       until string.empty?
         text, code, string = string.partition(/{% raw %}.*?{% endraw %}/m)
   
@@ -47,7 +55,8 @@ module Serbea
             gsub("%}", "__RAW_END_EVAL__")
         end
       end
-  
+
+      # Process the pipeline outputs
       string = buff
       buff = ""
       until string.empty?
@@ -70,6 +79,37 @@ module Serbea
           pipeline_suffix = processed_filters ? ") %}" : ")) %}"
   
           buff << subs.sub("{{", "{%= pipeline(self, (").sub("}}", pipeline_suffix).gsub("__PIPE_C__", '\|')
+        end
+      end
+
+      # Process the render directives
+      string = buff
+      buff = ""
+      until string.empty?
+        text, code, string = string.partition(/{%@.*?%}/m)
+  
+        buff << text
+        if code.length > 0
+          code.sub! /^\{%@/, ""
+          code.sub! /%}$/, ""
+          unless ["end", ""].include? code.strip
+            pieces = code.split(" ")
+            if pieces[0].start_with?(/[A-Z]/) # Ruby class name
+              pieces[0].prepend " "
+              pieces[0] << ".new("
+            else # string or something else
+              pieces[0].prepend "("
+            end
+            if pieces.last == "do"
+              pieces.last.prepend ") "
+              buff << "{%:= #{self.class.render_directive}#{pieces.join(" ")} %}"
+            else
+              pieces.last << ")"
+              buff << "{%= #{self.class.render_directive}#{pieces.join(" ")} %}"
+            end
+          else
+            buff << "{%: end %}"
+          end
         end
       end
 

@@ -36,11 +36,11 @@ Here we go! {{ so_far | upcase | foo: "WILD", bar: baz | finalize }} Yay! {{ 123
 
 ---
 
-{%= "HAHA" if defined?(groovy) %}
+{{ defined?(groovy) ? "HAHA" : "groovy not defined :("  }}
 
 {% groovy = "   groovy!   " %}
 
-{%= "HAHA" if defined?(groovy) %}
+{{ defined?(groovy) ? "HAHA" : "groovy not defined :("  }}
 
 ---
 
@@ -68,14 +68,14 @@ Selected? {{ has_selected_variant }}
 
 ---
 
-{%:= render "weee/wooo", cool: "beans" do %}
+{%@ "weee/wooo", cool: "beans" do %}
   This is **dope!**
-  {%:= render "weee/wooo", cool: "cats" do %}
+  {%@ "weee/wooo", cool: "cats" do %}
     So great.
-  {%: end %}
-{%: end %}
+  {%@ end %}
+{%@ end %}
 
-{%= render "weee/wooo", cool: "boxess" %}
+{%@ "weee/wooo", cool: "boxes" %}
 
 {% import "helpers" %}
 <p>
@@ -94,3 +94,21 @@ Selected? {{ has_selected_variant }}
 {%: end %}
 
 {{ goober "Foo" }}
+
+{{ "Let's not <em>escape</em> by default!"  }}
+{%
+Serbea::Pipeline.output_processor = lambda do |input|
+  Erubi.h(input)
+end
+%}
+{{ "Now let's <em>escape</em> by default!"  }}
+
+{%@ ButtonComponent foo: true do %}
+  <p>component 1!</p>
+{%@ %}
+
+{%@ ButtonComponent bar: false, baz: 1234 do %}
+  <p>component 2!</p>
+{%@ end %}
+
+{%@ ButtonComponent %}

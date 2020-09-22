@@ -79,6 +79,10 @@ class SerbView
     end
     @_erbout = previous_buffer_state
 
+    unless tmpl_name.is_a?(String)
+      return "Component! < #{variables[:content]} >"
+    end
+
     fake_tmpl = "aha! {{ content }} yes! cool {%= cool %}"
     fake_tmpl += "{% if defined? blah %}wee!{% end %}"
     
@@ -114,6 +118,12 @@ tmpl = Tilt.new("template.serb")
 #puts "====="
 
 baz = "LALA"
+
+class ButtonComponent
+  def initialize(options = {})
+    #p options
+  end
+end
 
 output = tmpl.render(SerbView.new(baz))
 
