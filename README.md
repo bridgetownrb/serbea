@@ -38,7 +38,7 @@ Coming soon…
 {%: end %}
 ```
 
-```ruby
+```
 {%:= render "box" do %}
   This is **dope!**
   {%:= render "card", title: "Nifty!" do %}
