@@ -100,8 +100,17 @@ module Serbea
             else # string or something else
               pieces[0].prepend "("
             end
-            if pieces.last == "do"
-              pieces.last.prepend ") "
+
+            includes_block = false
+            pieces.reverse.each do |piece|
+              if piece == "do" && (pieces.last == "do" || pieces.last.end_with?("|"))
+                piece.prepend(") ")
+                includes_block = true
+                break
+              end
+            end
+
+            if includes_block
               buff << "{%:= #{self.class.render_directive}#{pieces.join(" ")} %}"
             else
               pieces.last << ")"

@@ -68,7 +68,7 @@ Selected? {{ has_selected_variant }}
 
 ---
 
-{%@ "weee/wooo", cool: "beans" do %}
+{%@ "weee/wooo", cool: "beans do yeah" do |testing| %}
   This is **dope!**
   {%@ "weee/wooo", cool: "cats" do %}
     So great.
@@ -107,7 +107,7 @@ end
   <p>component 1!</p>
 {%@ %}
 
-{%@ ButtonComponent bar: false, baz: 1234 do %}
+{%@ ButtonComponent bar: false, baz: 1234 do |block_var| %}
   <p>component 2!</p>
 {%@ end %}
 
