@@ -45,6 +45,15 @@ Coming soon…
     So great.
   {%: end %}
 {%: end %}
+
+# Let's simplify that using the new render directive!
+
+{%@ "box" do %}
+  This is **dope!**
+  {%@ "card", title: "Nifty!" do %}
+    So great.
+  {%@ end %}
+{%@ end %}
 ```
 
 ```html
@@ -58,4 +67,15 @@ Coming soon…
     {% end %}
   {% end %}
 {%: end %}
+
+# Even better, use the new render directive!
+
+{%@ Theme::DropdownComponent name: "banner", label: "Banners" do |dropdown| %}
+  {% RegistryTheme::BANNERS.each do |banner| %}
+    {% dropdown.slot(:item, value: banner) do %}
+      <img src="/themes/{{ banner | parameterize: separator: "_" }}.jpg">
+      <strong>{{ banner }}</strong>
+    {% end %}
+  {% end %}
+{%@ end %}
 ```
