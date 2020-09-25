@@ -56,7 +56,7 @@ module Serbea
         end
       end
 
-      # Process the pipeline outputs
+      # Process any pipelines
       string = buff
       buff = ""
       until string.empty?
@@ -82,7 +82,15 @@ module Serbea
         end
       end
 
-      # Process the render directives
+      # Process any directives
+      #
+      # TODO: allow custom directives! aka
+      # {%@something whatever %}
+      # {%@script
+      #   const foo = "really? #{really}!"
+      #   alert(foo.toLowerCase())
+      # %}
+      # {%@preact AwesomeChart data={#{ruby_data.to_json}} %}
       string = buff
       buff = ""
       until string.empty?

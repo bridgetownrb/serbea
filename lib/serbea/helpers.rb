@@ -1,5 +1,9 @@
 module Serbea
   module Helpers
+    def self.included(mod)
+      Serbea::Pipeline.deny_value_method %i(prepend append)
+    end
+
     def capture(obj=nil)
       previous_buffer_state = @_erbout
       @_erbout = +""
@@ -21,5 +25,13 @@ module Serbea
       Erubi.h(input)
     end
     alias_method :escape, :h
+
+    def prepend(old_string, new_string)
+      "#{new_string}#{old_string}"
+    end
+
+    def append(old_string, new_string)
+      "#{old_string}#{new_string}"
+    end
   end
 end

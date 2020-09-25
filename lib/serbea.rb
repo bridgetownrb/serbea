@@ -3,9 +3,9 @@ require "tilt/erubi"
 require "erubi/capture_end"
 
 require "serbea/helpers"
-require "serbea/component_renderer"
 require "serbea/pipeline"
 require "serbea/template_engine"
+require "serbea/component_renderer"
 
 module Tilt
   class SerbeaTemplate < ErubiTemplate

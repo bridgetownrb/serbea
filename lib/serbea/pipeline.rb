@@ -10,19 +10,26 @@ module Serbea
       end
     end
 
+    def self.deny_value_method(name)
+      value_methods_denylist.merge Array(name)
+    end
+    def self.value_methods_denylist
+      @value_methods_denylist ||= Set.new
+    end
+
     def initialize(context, value)
       @context = context
       @value = value
     end
 
-    def filter(sym, *aargs)
-      if @value.respond_to?(sym)
-        @value = @value.send(sym, *aargs)
-      elsif @context.respond_to?(sym)
-        @value = @context.send(sym, @value, *aargs)
+    def filter(name, *args)
+      if @value.respond_to?(name) && !self.class.value_methods_denylist.include?(name)
+        @value = @value.send(name, *args)
+      elsif @context.respond_to?(name)
+        @value = @context.send(name, @value, *args)
       else
-        "Serbea warning: Filter not found: #{sym}".tap do |warning|
-          raise_on_missing_filters ? raise(warning) : puts(warning)
+        "Serbea warning: Filter not found: #{name}".tap do |warning|
+          raise_on_missing_filters ? raise(warning) : STDERR.puts(warning)
         end
       end
 
