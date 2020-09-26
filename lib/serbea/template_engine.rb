@@ -68,7 +68,7 @@ module Serbea
   
           code = code.gsub('\|', "__PIPE_C__")
   
-          subs = code.gsub(/\s*\|\s+(.*?)\s([^|}]*)/) do
+          subs = code.gsub(/\s*\|>?\s+(.*?)\s([^|}]*)/) do
             args = $2
             args = nil if args.strip == ""
             prefix = processed_filters ? ")" : "))"

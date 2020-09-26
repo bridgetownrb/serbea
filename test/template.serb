@@ -85,7 +85,7 @@ Prepend permanent?
   Multiply! {{ [1,3,6, "9"] | multiply_array: 10 }}
 </p>
 
-{{ partial "errors", errors: error_messages | upcase: }}
+{{ partial "errors", errors: error_messages |> upcase: }}
 
 ----
 {%:= goober do %}
@@ -115,3 +115,11 @@ end
 {%@ end %}
 
 {%@ ButtonComponent %}
+
+{{
+  [1,2,3] |>
+  map: ->(i) {
+    i * 10
+  } |>
+  assign: :array_length
+}}Array length: {%= @array_length.length %}
