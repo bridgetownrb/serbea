@@ -121,5 +121,5 @@ end
   map: ->(i) {
     i * 10
   } |>
-  assign: :array_length
+  assign_to: :array_length
 }}Array length: {%= @array_length.length %}
