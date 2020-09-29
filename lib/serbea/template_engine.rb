@@ -35,8 +35,7 @@ module Serbea
       string = template.dup
       if properties[:strip_front_matter] && self.class.has_yaml_header?(string)
         if string = string.match(FRONT_MATTER_REGEXP)
-          string = string.post_match
-  #        yaml_data = SafeYAML.load(template.captures[0])
+          string = ("{%#%}\n" * string.to_s.lines.count) + string.post_match
         end
       end
   
