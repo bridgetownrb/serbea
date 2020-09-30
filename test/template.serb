@@ -1,7 +1,17 @@
 ---
 layout: page
-title: I'm a title!
+title: I'm a #{
+  "titl" + "e! " +
+  [':', ')']
+  .join
+}
+categories:
+- category1
+- category2
 ---
+
+The title is: {{ page.data["title"] }}
+Categories: {{ page.data["categories"] }}
 
 This is {{ "totally great" }}
 Um… {% so_far = "so good" %}

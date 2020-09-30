@@ -1,5 +1,6 @@
 require "bundler"
 require "serbea"
+require "ostruct"
 
 class SerbView
   include Serbea::Helpers
@@ -47,6 +48,14 @@ class SerbView
 
   def finalize(value)
     "((#{value}))"
+  end
+
+  def pagedata=(data)
+    @page = OpenStruct.new(data: data)
+  end
+
+  def page
+    @page
   end
 
   def form(classname:)
@@ -106,10 +115,10 @@ class SerbView
 end
 
 
-simple_template = "Hi {{ 'there' }}"
-
-
+#simple_template = "Hi {{ 'there' }}"
 #tmpl = Tilt::SerbeaTemplate.new { simple_template }
+
+Serbea::TemplateEngine.front_matter_preamble = "self.pagedata = YAML.load"
 
 tmpl = Tilt.new("template.serb")
 

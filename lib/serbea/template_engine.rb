@@ -8,6 +8,13 @@ module Serbea
     def self.render_directive
       @render_directive ||= "render"
     end
+
+    def self.front_matter_preamble=(varname)
+      @front_matter_preamble = varname
+    end
+    def self.front_matter_preamble
+      @front_matter_preamble ||= "frontmatter = YAML.load"
+    end
   
     def self.has_yaml_header?(template)
       template.lines.first&.match? %r!\A---\s*\r?\n!
@@ -35,7 +42,13 @@ module Serbea
       string = template.dup
       if properties[:strip_front_matter] && self.class.has_yaml_header?(string)
         if string = string.match(FRONT_MATTER_REGEXP)
-          string = ("{%#%}\n" * string.to_s.lines.count) + string.post_match
+          require "yaml" if self.class.front_matter_preamble.include?(" = YAML.load")
+
+          string = "{% #{self.class.front_matter_preamble} <<~YAMLDATA\n" + 
+            string[1].sub(/^---\n/,'') +
+            "YAMLDATA\n%}" +
+            string[2].sub(/^---\n/, '') +
+            string.post_match
         end
       end
   
