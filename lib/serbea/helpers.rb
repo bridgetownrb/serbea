@@ -1,7 +1,7 @@
 module Serbea
   module Helpers
     def self.included(mod)
-      Serbea::Pipeline.deny_value_method %i(escape h prepend append map assign_to)
+      Serbea::Pipeline.deny_value_method %i(escape h prepend append assign_to)
     end
 
     def capture(obj=nil)
@@ -32,10 +32,6 @@ module Serbea
 
     def append(old_string, new_string)
       "#{old_string}#{new_string}"
-    end
-
-    def map(input, block)
-      input.map(&block)
     end
 
     def assign_to(input, varname, preserve: false)

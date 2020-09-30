@@ -1,5 +1,27 @@
 module Serbea
   class Pipeline
+    def self.exec(template, input: (no_input_passed = true; nil), include_helpers: nil)
+      anon = Class.new do
+        include Serbea::Helpers
+
+        attr_accessor :input, :output
+      end
+
+      if include_helpers
+        anon.include include_helpers
+      end
+
+      pipeline_obj = anon.new
+      pipeline_obj.input = input unless no_input_passed
+
+      full_template = "{{ #{template} | assign_to: :output }}"
+
+      tmpl = Tilt::SerbeaTemplate.new { full_template }
+      tmpl.render(pipeline_obj)
+
+      pipeline_obj.output
+    end
+
     def self.output_processor=(processor)
       @output_processor = processor
     end
@@ -22,11 +44,30 @@ module Serbea
       @value = value
     end
 
-    def filter(name, *args)
+    # TODO: clean this up somehow and still support Ruby 2.5..3.0!
+    def filter(name, *args, **kwargs)
       if @value.respond_to?(name) && !self.class.value_methods_denylist.include?(name)
-        @value = @value.send(name, *args)
+        if args.last.is_a?(Proc)
+          real_args = args.take(args.length - 1)
+          block = args.last
+          unless kwargs.empty?
+            @value = @value.send(name, *real_args, **kwargs, &block)
+          else
+            @value = @value.send(name, *real_args, &block)
+          end
+        else
+          unless kwargs.empty?
+            @value = @value.send(name, *args, **kwargs)
+          else
+            @value = @value.send(name, *args)
+          end
+        end
       elsif @context.respond_to?(name)
-        @value = @context.send(name, @value, *args)
+        unless kwargs.empty?
+          @value = @context.send(name, @value, *args, **kwargs)
+        else
+          @value = @context.send(name, @value, *args)
+        end
       else
         "Serbea warning: Filter not found: #{name}".tap do |warning|
           raise_on_missing_filters ? raise(warning) : STDERR.puts(warning)

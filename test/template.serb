@@ -64,7 +64,7 @@ Selected? {{ has_selected_variant }}
    end.strip %}
 
 {% nice = "Whoa " %}
-{{ wow | prepend: "OMG! " | missing_filter | prepend: *nice | append: " ;-D" }}
+{{ wow | prepend: "OMG! " | missing_filter | prepend: nice | append: " ;-D" }}
 
 Prepend permanent?
 {{ wow }}
@@ -118,8 +118,20 @@ end
 
 {{
   [1,2,3] |>
-  map: ->(i) {
+  map: -> i  {
     i * 10
   } |>
+  to_enum: :filter |>
+  each: -> i do
+    i > 15
+  end |>
   assign_to: :array_length
 }}Array length: {%= @array_length.length %}
+
+{{ "1,2,3" | split: ",", ->(str) { @wild ||= ""; @wild += "ha#{str}he" } }}
+{{ @wild }}
+
+{{ [3,5,10] | filter: ->item do
+    check = 4
+    return item > check
+    end | join: "." }}
