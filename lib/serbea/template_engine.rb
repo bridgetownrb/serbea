@@ -76,6 +76,7 @@ module Serbea
   
         buff << text
         if code.length > 0
+          original_line_length = code.lines.size
           processed_filters = false
   
           code = code.gsub('\|', "__PIPE_C__")
@@ -90,7 +91,13 @@ module Serbea
   
           pipeline_suffix = processed_filters ? ") %}" : ")) %}"
   
-          buff << subs.sub("{{", "{%= pipeline(self, (").sub("}}", pipeline_suffix).gsub("__PIPE_C__", '\|')
+          subs = subs.sub("{{", "{%= pipeline(self, (").sub("}}", pipeline_suffix).gsub("__PIPE_C__", '\|')
+
+          buff << subs
+
+          (original_line_length - subs.lines.size).times do
+            buff << "\n{% %}" # preserve original line length
+          end
         end
       end
 
@@ -113,6 +120,8 @@ module Serbea
           code.sub! /^\{%@/, ""
           code.sub! /%}$/, ""
           unless ["end", ""].include? code.strip
+            original_line_length = code.lines.size
+
             pieces = code.split(" ")
             if pieces[0].start_with?(/[A-Z]/) # Ruby class name
               pieces[0].prepend " "
@@ -135,6 +144,9 @@ module Serbea
             else
               pieces.last << ")"
               buff << "{%= #{self.class.render_directive}#{pieces.join(" ")} %}"
+            end
+            (original_line_length - 1).times do
+              buff << "\n{% %}" # preserve original directive line length
             end
           else
             buff << "{%: end %}"
