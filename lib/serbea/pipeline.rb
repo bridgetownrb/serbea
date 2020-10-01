@@ -32,6 +32,13 @@ module Serbea
       end
     end
 
+    def self.raise_on_missing_filters=(config_boolean)
+      @raise_on_missing_filters = config_boolean
+    end
+    def self.raise_on_missing_filters
+      @raise_on_missing_filters ||= false
+    end
+
     def self.deny_value_method(name)
       value_methods_denylist.merge Array(name)
     end
@@ -70,7 +77,7 @@ module Serbea
         end
       else
         "Serbea warning: Filter not found: #{name}".tap do |warning|
-          raise_on_missing_filters ? raise(warning) : STDERR.puts(warning)
+          self.class.raise_on_missing_filters ? raise(warning) : STDERR.puts(warning)
         end
       end
 
@@ -80,7 +87,5 @@ module Serbea
     def to_s
       self.class.output_processor.call @value.to_s
     end
-
-    def raise_on_missing_filters; false; end
   end
 end

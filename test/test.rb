@@ -119,6 +119,7 @@ end
 #tmpl = Tilt::SerbeaTemplate.new { simple_template }
 
 Serbea::TemplateEngine.front_matter_preamble = "self.pagedata = YAML.load"
+#Serbea::Pipeline.raise_on_missing_filters = true
 
 tmpl = Tilt.new("template.serb")
 
