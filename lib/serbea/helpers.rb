@@ -23,7 +23,7 @@ module Serbea
   
     def h(input)
       result = Erubi.h(input)
-      h.respond_to?(:html_safe) ? result.html_safe : result
+      result.respond_to?(:html_safe) ? result.html_safe : result
     end
     alias_method :escape, :h
 
