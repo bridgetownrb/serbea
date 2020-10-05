@@ -1,9 +1,12 @@
+require "serbea/rouge_lexer"
+
 module Bridgetown
   class SerbeaView < RubyTemplateView
     include Serbea::Helpers
 
     def partial(partial_name, options = {})
       options.merge!(options[:locals]) if options[:locals]
+      options[:content] = yield if block_given?
 
       partial_segments = partial_name.split("/")
       partial_segments.last.sub!(%r!^!, "_")
@@ -13,14 +16,9 @@ module Bridgetown
         site.in_source_dir(site.config[:partials_dir], "#{partial_name}.serb")
       ).render(self, options)
     end
-    
-    def markdownify
-      previous_buffer_state = @_erbout
-      @_erbout = +""
-      result = yield
-      @_erbout = previous_buffer_state
 
-      content = Bridgetown::Utils.reindent_for_markdown(result)
+    def markdownify(&block)
+      content = Bridgetown::Utils.reindent_for_markdown(capture(&block))
       converter = site.find_converter_instance(Bridgetown::Converters::Markdown)
       md_output = converter.convert(content).strip
       @_erbout << md_output
@@ -29,6 +27,7 @@ module Bridgetown
 
   module Converters
     class SerbeaTemplates < Converter
+      priority :highest
       input :serb
 
       # Logic to do the Serbea content conversion.
@@ -50,6 +49,20 @@ module Bridgetown
         else
           serb_renderer.render(serb_view)
         end
+      end
+
+      def matches(ext, convertible)
+        if convertible.data[:template_engine] == "serbea" ||
+            (convertible.data[:template_engine].nil? &&
+              @config[:template_engine] == "serbea")
+          return true
+        end
+
+        super(ext)
+      end
+
+      def output_ext(ext)
+        ext == ".serb" ? ".html" : ext
       end
     end
   end

@@ -91,7 +91,7 @@ module Serbea
   
           pipeline_suffix = processed_filters ? ") %}" : ")) %}"
   
-          subs = subs.sub("{{", "{%= pipeline(self, (").sub("}}", pipeline_suffix).gsub("__PIPE_C__", '\|')
+          subs = subs.sub("{{", "{%= pipeline(self, (").sub("}}", pipeline_suffix).gsub("__PIPE_C__", '|')
 
           buff << subs
 

@@ -145,3 +145,7 @@ end
     check = 4
     return item > check
     end | join: "." }}
+
+{{ [1, 3, 6] \| [2, 3, 9] | join: "-" | append: " Foo \| bar!" | gsub: /ba|r/, "x" }}
+
+{{ LambdaTest.new | scope: "lambda test", ->(x) { x * 20 }, ->{} | center: 50 }}
