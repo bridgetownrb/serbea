@@ -135,6 +135,12 @@ class ButtonComponent
   end
 end
 
+class LambdaTest
+  def scope(name, func)
+    "Name: #{name}, output: #{func.call(10)}"
+  end
+end
+
 output = tmpl.render(SerbView.new(baz))
 
 puts output
