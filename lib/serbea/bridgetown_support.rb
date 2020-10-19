@@ -51,11 +51,13 @@ module Bridgetown
         end
       end
 
-      def matches(ext, convertible)
-        if convertible.data[:template_engine] == "serbea" ||
-            (convertible.data[:template_engine].nil? &&
-              @config[:template_engine] == "serbea")
-          return true
+      def matches(ext, convertible = nil)
+        if convertible
+          if convertible.data[:template_engine] == "serbea" ||
+              (convertible.data[:template_engine].nil? &&
+                @config[:template_engine] == "serbea")
+            return true
+          end
         end
 
         super(ext)
