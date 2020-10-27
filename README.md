@@ -109,5 +109,5 @@ Coming soon…
   assign_to: :array_length
 }}
 
-Array length: {%= @array_length.length %}
+Array length: {{ @array_length.length }}
 ```
