@@ -38,7 +38,7 @@ Coming soon…
 {% end %}
 ```
 
-```
+```hbs
 {%= render "box" do %}
   This is **dope!**
   {%= render "card", title: "Nifty!" do %}
