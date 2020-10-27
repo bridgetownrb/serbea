@@ -4,9 +4,9 @@ module Bridgetown
   class SerbeaView < RubyTemplateView
     include Serbea::Helpers
 
-    def partial(partial_name, options = {})
+    def partial(partial_name, options = {}, &block)
       options.merge!(options[:locals]) if options[:locals]
-      options[:content] = yield if block_given?
+      options[:content] = capture(&block) if block
 
       partial_segments = partial_name.split("/")
       partial_segments.last.sub!(%r!^!, "_")
@@ -17,11 +17,12 @@ module Bridgetown
       ).render(self, options)
     end
 
-    def markdownify(&block)
-      content = Bridgetown::Utils.reindent_for_markdown(capture(&block))
+    def markdownify(input = nil, &block)
+      content = Bridgetown::Utils.reindent_for_markdown(
+        block.nil? ? input.to_s : capture(&block)
+      )
       converter = site.find_converter_instance(Bridgetown::Converters::Markdown)
-      md_output = converter.convert(content).strip
-      @_erbout << md_output
+      converter.convert(content).strip
     end
   end
 

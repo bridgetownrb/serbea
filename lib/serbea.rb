@@ -10,7 +10,7 @@ require "serbea/component_renderer"
 module Tilt
   class SerbeaTemplate < ErubiTemplate
     def prepare
-      @options.merge!(outvar: "@_erbout", engine_class: Serbea::TemplateEngine)
+      @options.merge!(outvar: "@_erbout", bufval: "Serbea::Buffer.new", engine_class: Serbea::TemplateEngine)
       super
     end
 

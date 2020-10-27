@@ -4,12 +4,22 @@ module Serbea
       Serbea::Pipeline.deny_value_method %i(escape h prepend append assign_to)
     end
 
-    def capture(obj=nil)
+    def capture(obj = nil, &block)
       previous_buffer_state = @_erbout
-      @_erbout = +""
-      result = obj ? yield(obj) : yield
+      @_erbout = Serbea::Buffer.new
+
+      # For compatibility with ActionView, not used by Bridgetown normally
+      previous_ob_state = @output_buffer
+      @output_buffer = Serbea::Buffer.new
+
+      result = instance_exec(obj, &block)
+      if @output_buffer != ""
+        # use Rails' ActionView buffer if present
+        result = @output_buffer
+      end
       @_erbout = previous_buffer_state
-    
+      @output_buffer = previous_ob_state
+
       result.respond_to?(:html_safe) ? result.html_safe : result
     end
   

@@ -27,6 +27,8 @@ end
 
 ActionView::Template.register_template_handler(:serb, Serbea::Plugin)
 
-Serbea::Pipeline.output_processor = lambda do |input|
-  input.html_safe? ? input : ActionController::Base.helpers.strip_tags(input)
+if defined?(ActionController::Base)
+  Serbea::Pipeline.output_processor = lambda do |input|
+    input.html_safe? ? input : ActionController::Base.helpers.strip_tags(input)
+  end
 end

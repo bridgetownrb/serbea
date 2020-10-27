@@ -7,7 +7,7 @@
 %}
 {%
   helper :goober do |content="", &block|
-    content = block.call if block
+    content = capture(&block) if block
     "Totally grand! #{content.split(',').join(';').split(' ').join(',')} Yay!"
   end
 %}

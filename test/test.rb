@@ -60,7 +60,7 @@ class SerbView
 
   def form(classname:)
     previous_buffer_state = @_erbout
-    @_erbout = +""
+    @_erbout = Serbea::Buffer.new
     fields = Fields.new
     str = "<form class=\"#{classname}\">"
     str << yield(fields)
@@ -79,14 +79,11 @@ class SerbView
   end
 
   def render(tmpl_name, variables = {}, &block)
-    previous_buffer_state = @_erbout
-    @_erbout = +""
     if (block)
-      variables.merge!({content: yield})
+      variables.merge!({content: capture(&block)})
     elsif !variables.key?(:content)
       variables.merge!({content: ""})
     end
-    @_erbout = previous_buffer_state
 
     unless tmpl_name.is_a?(String)
       return "Component! < #{variables[:content]} >"

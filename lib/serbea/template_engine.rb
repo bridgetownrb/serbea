@@ -1,5 +1,15 @@
 module Serbea
-  class TemplateEngine < Erubi::CaptureEndEngine
+  class Buffer < String
+    def concat_to_s(input)
+      concat input.to_s
+    end
+
+    alias_method :safe_append=, :concat_to_s
+    alias_method :append=, :concat_to_s
+    alias_method :safe_expr_append=, :concat_to_s
+  end
+
+  class TemplateEngine < Erubi::Engine
     FRONT_MATTER_REGEXP = %r!\A(---\s*\n.*?\n?)^((---|\.\.\.)\s*$\n?)!m.freeze
 
     def self.render_directive=(directive)
@@ -21,14 +31,14 @@ module Serbea
     end
   
     def initialize(input, properties={})
-      properties[:regexp] = /{%(\:?={1,2}|-|\#|%|\:)?(.*?)([-=])?%}([ \t]*\r?\n)?/m
+      properties[:regexp] = /{%(={1,2}|-|\#|%)?(.*?)([-=])?%}([ \t]*\r?\n)?/m
       properties[:strip_front_matter] = true unless properties.key?(:strip_front_matter)
       super process_serbea_input(input, properties), properties
     end
   
     def add_postamble(postamble)
       src << postamble
-      src << "@_erbout.html_safe" if postamble.respond_to?(:html_safe)
+      src << "#{@bufvar}.html_safe" if postamble.respond_to?(:html_safe)
   
       src.gsub!("__RAW_START_PRINT__", "{{")
       src.gsub!("__RAW_END_PRINT__", "}}")
@@ -140,7 +150,7 @@ module Serbea
             end
 
             if includes_block
-              buff << "{%:= #{self.class.render_directive}#{pieces.join(" ")} %}"
+              buff << "{%= #{self.class.render_directive}#{pieces.join(" ")} %}"
             else
               pieces.last << ")"
               buff << "{%= #{self.class.render_directive}#{pieces.join(" ")} %}"
@@ -149,7 +159,7 @@ module Serbea
               buff << "\n{% %}" # preserve original directive line length
             end
           else
-            buff << "{%: end %}"
+            buff << "{% end %}"
           end
         end
       end
@@ -158,26 +168,27 @@ module Serbea
     end
   
     private
-  
-    # Handle the {%:= and {%:== tags
-    # Carried over from the Erubi class but with changed indicators
-    def handle(indicator, code, tailch, rspace, lspace)
-      case indicator
-      when ':=', ':=='
-        rspace = nil if tailch && !tailch.empty?
-        add_text(lspace) if lspace
-        escape_capture = !((indicator == ':=') ^ @escape_capture)
-        src << "begin; (#{@bufstack} ||= []) << #{@bufvar}; #{@bufvar} = #{@bufval}; #{@bufstack}.last << #{@escapefunc if escape_capture}((" << code
-        add_text(rspace) if rspace
-      when ':'
-        rspace = nil if tailch && !tailch.empty?
-        add_text(lspace) if lspace
-        result = @yield_returns_buffer ? " #{@bufvar}; " : ""
-        src << result << code << ")).to_s; ensure; #{@bufvar} = #{@bufstack}.pop; end;"
-        add_text(rspace) if rspace
+
+    def add_code(code)
+      @src << code
+      @src << ";#{@bufvar};" if code.strip.split(".").first == "end"
+      @src << ';' unless code[Erubi::RANGE_LAST] == "\n"
+    end
+
+    # pulled from Rails' ActionView
+    BLOCK_EXPR = %r!\s*((\s+|\))do|\{)(\s*\|[^|]*\|)?\s*\Z!.freeze
+
+    def add_expression(indicator, code)
+      if BLOCK_EXPR.match?(code)
+        src << "#{@bufvar}.append= " << code
       else
         super
       end
+    end
+
+    # Don't allow == to output escaped strings, as that's the opposite of Rails
+    def add_expression_result_escaped(code)
+      add_expression_result(code)
     end
   end # class
 end
