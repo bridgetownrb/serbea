@@ -33,18 +33,18 @@ Coming soon…
 ```
 
 ```ruby
-{%:= form classname: "checkout" do |f| %}
+{%= form classname: "checkout" do |f| %}
   {{ f.input :first_name, required: true | errors: error_messages }}
-{%: end %}
+{% end %}
 ```
 
 ```
-{%:= render "box" do %}
+{%= render "box" do %}
   This is **dope!**
-  {%:= render "card", title: "Nifty!" do %}
+  {%= render "card", title: "Nifty!" do %}
     So great.
-  {%: end %}
-{%: end %}
+  {% end %}
+{% end %}
 
 # Let's simplify that using the new render directive!
 
@@ -52,21 +52,21 @@ Coming soon…
   This is **dope!**
   {%@ "card", title: "Nifty!" do %}
     So great.
-  {%@ end %}
-{%@ end %}
+  {% end %}
+{% end %}
 ```
 
 ```html
 # Works with ViewComponent!
 
-{%:= render(Theme::DropdownComponent.new(name: "banner", label: "Banners")) do |dropdown| %}
+{%= render(Theme::DropdownComponent.new(name: "banner", label: "Banners")) do |dropdown| %}
   {% RegistryTheme::BANNERS.each do |banner| %}
     {% dropdown.slot(:item, value: banner) do %}
       <img src="{{ banner | parameterize: separator: "_" | prepend: "/themes/" | append: ".jpg" }}">
       <strong>{{ banner }}</strong>
     {% end %}
   {% end %}
-{%: end %}
+{% end %}
 
 # Even better, use the new render directive!
 
@@ -77,5 +77,5 @@ Coming soon…
       <strong>{{ banner }}</strong>
     {% end %}
   {% end %}
-{%@ end %}
+{% end %}
 ```
