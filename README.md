@@ -6,7 +6,7 @@ Make of that what you will.
 
 Coming soon…
 
-```ruby
+```njk
 # example.serb
 
 {% wow = capture do %}
@@ -18,7 +18,7 @@ Coming soon…
 {{ wow | prepend: "OMG! " }}
 ```
 
-```ruby
+```njk
 <p>
   {%
     helper :multiply_array do |input, multiply_by = 2|
@@ -32,13 +32,13 @@ Coming soon…
 </p>
 ```
 
-```ruby
+```njk
 {%= form classname: "checkout" do |f| %}
   {{ f.input :first_name, required: true | errors: error_messages }}
 {% end %}
 ```
 
-```hbs
+```njk
 {%= render "box" do %}
   This is **dope!**
   {%= render "card", title: "Nifty!" do %}
@@ -56,7 +56,7 @@ Coming soon…
 {% end %}
 ```
 
-```html
+```njk
 # Works with ViewComponent!
 
 {%= render(Theme::DropdownComponent.new(name: "banner", label: "Banners")) do |dropdown| %}
