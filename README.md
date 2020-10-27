@@ -20,7 +20,7 @@ Coming soon…
 
 ## What It Looks Like
 
-```njk
+```hbs
 # example.serb
 
 {% wow = capture do %}
@@ -32,7 +32,7 @@ Coming soon…
 {{ wow | prepend: "OMG! " }}
 ```
 
-```njk
+```hbs
 <p>
   {%
     helper :multiply_array do |input, multiply_by = 2|
@@ -46,13 +46,13 @@ Coming soon…
 </p>
 ```
 
-```njk
+```hbs
 {%= form classname: "checkout" do |f| %}
   {{ f.input :first_name, required: true | errors: error_messages }}
 {% end %}
 ```
 
-```njk
+```hbs
 {%= render "box" do %}
   This is **dope!**
   {%= render "card", title: "Nifty!" do %}
@@ -70,7 +70,7 @@ Coming soon…
 {% end %}
 ```
 
-```njk
+```hbs
 # Works with ViewComponent!
 
 {%= render(Theme::DropdownComponent.new(name: "banner", label: "Banners")) do |dropdown| %}
