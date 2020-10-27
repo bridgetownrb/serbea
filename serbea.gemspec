@@ -17,5 +17,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency("erubi", "~> 1.9")
+  spec.add_runtime_dependency("activesupport", "~> 6.0")
   spec.add_runtime_dependency("tilt", "~> 2.0")
 end

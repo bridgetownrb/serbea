@@ -38,7 +38,7 @@ module Serbea
   
     def add_postamble(postamble)
       src << postamble
-      src << "#{@bufvar}.html_safe" if postamble.respond_to?(:html_safe)
+      src << "#{@bufvar}.html_safe"
   
       src.gsub!("__RAW_START_PRINT__", "{{")
       src.gsub!("__RAW_END_PRINT__", "}}")

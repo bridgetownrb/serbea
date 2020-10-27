@@ -10,8 +10,8 @@ categories:
 - category2
 ---
 
-The title is: {{ page.data["title"] }}
-Categories: {{ page.data["categories"] }}
+The title is: {{ page.data["title"] | safe }}
+Categories: {{ page.data["categories"] | safe }}
 
 This is {{ "totally great" }}
 Um… {% so_far = "so good" %}
@@ -41,7 +41,7 @@ Here we go! {{ so_far | upcase | foo "WILD", bar: baz | finalize }} Yay! {{ 123 
 {%=  form(
         classname: "checkoout"
       ) do |f| %}
-  {{ f.input :first_name, required: true | errors: error_messages }}
+  {{ f.input :first_name, required: true | errors: error_messages | safe }}
 {% end %}
 
 ----
@@ -61,7 +61,7 @@ prepend:
 
 ----
 
-<input value="{{ da_value | escape }}" />
+<input value="{{ da_value }}" />
 {% has_selected_variant = groovy != nil ? true : false %}
 Selected? {{ has_selected_variant }}
 
@@ -77,7 +77,7 @@ Selected? {{ has_selected_variant }}
 {{ wow | prepend: "OMG! " | missing_filter | prepend: nice | append: " ;-D" }}
 
 Prepend permanent?
-{{ wow }}
+{{ wow | raw }}
 
 ----
 
@@ -108,13 +108,10 @@ Prepend permanent?
 
 {{ goober "Foo" }}
 
-{{ "Let's not <em>escape</em> by default!"  }}
-{%
-Serbea::Pipeline.output_processor = lambda do |input|
-  Erubi.h(input)
-end
-%}
-{{ "Now let's <em>escape</em> by default!"  }}
+{{ "Let's not <em>escape</em> this!" | safe }}
+{{ "Now let's <em>escape</em> by default!" }}
+{% Serbea::Pipeline.autoescape = false %}
+{{ "Now let's NOT <em>escape</em> by default!" }}
 
 {%@ ButtonComponent foo: true do %}
   <p>component 1!</p>

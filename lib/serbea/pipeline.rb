@@ -1,3 +1,5 @@
+require "active_support/core_ext/string/output_safety"
+
 module Serbea
   class Pipeline
     def self.exec(template, input: (no_input_passed = true; nil), include_helpers: nil)
@@ -27,9 +29,15 @@ module Serbea
     end
     def self.output_processor
       @output_processor ||= lambda do |input|
-        # no-op
-        input
+        (!input.html_safe? && self.autoescape) ? ERB::Util.h(input) : input.html_safe
       end
+    end
+
+    def self.autoescape=(config_boolean)
+      @autoescape = config_boolean
+    end
+    def self.autoescape
+      @autoescape.nil? ? true : @autoescape
     end
 
     def self.raise_on_missing_filters=(config_boolean)
@@ -85,7 +93,7 @@ module Serbea
     end
 
     def to_s
-      self.class.output_processor.call @value.to_s
+      self.class.output_processor.call(@value.is_a?(String) ? @value : @value.to_s)
     end
   end
 end

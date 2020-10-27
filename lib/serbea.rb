@@ -1,6 +1,5 @@
 require "tilt"
 require "tilt/erubi"
-require "erubi/capture_end"
 
 require "serbea/helpers"
 require "serbea/pipeline"

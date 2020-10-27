@@ -1,3 +1,5 @@
+require "active_support/core_ext/string/output_safety"
+
 module Serbea
   module Helpers
     def self.included(mod)
@@ -20,7 +22,7 @@ module Serbea
       @_erbout = previous_buffer_state
       @output_buffer = previous_ob_state
 
-      result.respond_to?(:html_safe) ? result.html_safe : result
+      result.html_safe
     end
   
     def pipeline(context, value)
@@ -32,10 +34,14 @@ module Serbea
     end
   
     def h(input)
-      result = Erubi.h(input)
-      result.respond_to?(:html_safe) ? result.html_safe : result
+      ERB::Util.h(input.to_s)
     end
     alias_method :escape, :h
+
+    def safe(input)
+      input.to_s.html_safe
+    end
+    alias_method :raw, :safe
 
     def prepend(old_string, new_string)
       "#{new_string}#{old_string}"
