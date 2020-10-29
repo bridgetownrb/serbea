@@ -1,4 +1,5 @@
 require "serbea/rouge_lexer"
+require "bridgetown-core"
 
 module Bridgetown
   class SerbeaView < RubyTemplateView
@@ -57,6 +58,8 @@ module Bridgetown
           if convertible.data[:template_engine] == "serbea" ||
               (convertible.data[:template_engine].nil? &&
                 @config[:template_engine] == "serbea")
+            # make sure Liquid doesn't find {% %} and decide to process Serbea code!
+            convertible.data["render_with_liquid"] = false
             return true
           end
         end
