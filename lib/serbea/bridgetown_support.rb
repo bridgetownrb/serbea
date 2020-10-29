@@ -58,8 +58,6 @@ module Bridgetown
           if convertible.data[:template_engine] == "serbea" ||
               (convertible.data[:template_engine].nil? &&
                 @config[:template_engine] == "serbea")
-            # make sure Liquid doesn't find {% %} and decide to process Serbea code!
-            convertible.data["render_with_liquid"] = false
             return true
           end
         end
@@ -71,5 +69,15 @@ module Bridgetown
         ext == ".serb" ? ".html" : ext
       end
     end
+  end
+end
+
+Bridgetown::Hooks.register :site, :pre_render do |site|
+  # make sure Liquid doesn't find {% %} and decide to process Serbea code!
+  site.contents.each do |convertible|
+    convertible.data.render_with_liquid = false if convertible.extname == ".serb"
+  end
+  site.layouts.values.each do |convertible|
+    convertible.data.render_with_liquid = false if convertible.ext == ".serb"
   end
 end
