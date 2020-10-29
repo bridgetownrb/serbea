@@ -72,7 +72,7 @@ module Bridgetown
   end
 end
 
-Bridgetown::Hooks.register :site, :pre_render do |site|
+Bridgetown::Hooks.register :site, :pre_render, reloadable: false do |site|
   # make sure Liquid doesn't find {% %} and decide to process Serbea code!
   site.contents.each do |convertible|
     convertible.data.render_with_liquid = false if convertible.extname == ".serb"
