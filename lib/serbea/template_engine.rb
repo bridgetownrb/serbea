@@ -98,22 +98,30 @@ module Serbea
             portion = s.scan_until(/\|>?/)
             if portion
               if portion.end_with?('\|')
+                # the pipe is escaped, so save that for lateR
                 escaped_segment += portion.sub(/\\\|$/, '|')
               elsif escaped_segment.length > 0
+                # we already have escaped content, so finish that up
                 segments << escaped_segment + portion
                 escaped_segment = ""
               else
+                # let's find out if this is actionable now
                 if s.check(/\|/)
+                  # nope, the next character is another pipe, so let's escape
                   s.pos += 1
                   escaped_segment += portion + "|"
                 else
+                  # finally, we have liftoff!
                   segments << portion
                 end
               end
             else
+              # we've reached the last bit of the code
               if escaped_segment.length > 0
+                # escape and get the rest
                 segments << escaped_segment + s.rest
               else
+                # or just the rest will do
                 segments << s.rest
               end
               done = true
@@ -126,8 +134,11 @@ module Serbea
           segments[1..-1].each_with_index do |segment, index|
             filter, args = segment.strip.match(/([^ :]*)(.*)/m).captures
             segments[index + 1] = ".filter(:" + filter
-            segments[index + 1] += ")" if args == ""
-            segments[index + 1] += "," + args.sub(/^:/, '') + ")" unless args == ""
+            if args == ""
+              segments[index + 1] += ")"
+            else
+              segments[index + 1] += "," + args.sub(/^:/, '') + ")"
+            end
           end
 
           subs = "{%= #{segments.join} %}"
