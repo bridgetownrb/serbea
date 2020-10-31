@@ -1,3 +1,5 @@
+require "strscan"
+
 module Serbea
   class Buffer < String
     def concat_to_s(input)
@@ -87,22 +89,48 @@ module Serbea
         buff << text
         if code.length > 0
           original_line_length = code.lines.size
-          processed_filters = false
-  
-          code = code.gsub('\|', "__PIPE_C__")
-  
-          subs = code.gsub(/\s*\|>?\s+(.*?)\s([^|}]*)/) do
-            args = $2
-            args = nil if args.strip == ""
-            prefix = processed_filters ? ")" : "))"
-            processed_filters = true
-            "#{prefix}.filter(:#{$1.chomp(":")}" + (args ? ", #{args}" : "")
-          end
-  
-          pipeline_suffix = processed_filters ? ") %}" : ")) %}"
-  
-          subs = subs.sub("{{", "{%= pipeline(self, (").sub("}}", pipeline_suffix).gsub("__PIPE_C__", '|')
 
+          s = StringScanner.new(code[2...-2])
+          done = false
+          escaped_segment = ""
+          segments = []
+          while !done
+            portion = s.scan_until(/\|>?/)
+            if portion
+              if portion.end_with?('\|')
+                escaped_segment += portion.sub(/\\\|$/, '|')
+              elsif escaped_segment.length > 0
+                segments << escaped_segment + portion
+                escaped_segment = ""
+              else
+                if s.check(/\|/)
+                  s.pos += 1
+                  escaped_segment += portion + "|"
+                else
+                  segments << portion
+                end
+              end
+            else
+              if escaped_segment.length > 0
+                segments << escaped_segment + s.rest
+              else
+                segments << s.rest
+              end
+              done = true
+            end
+          end
+
+          segments.map! { |str| str.sub(/\|>?$/, '') }
+
+          segments[0] = "pipeline(self, (#{segments[0].strip}))"
+          segments[1..-1].each_with_index do |segment, index|
+            filter, args = segment.strip.match(/([^ :]*)(.*)/m).captures
+            segments[index + 1] = ".filter(:" + filter
+            segments[index + 1] += ")" if args == ""
+            segments[index + 1] += "," + args.sub(/^:/, '') + ")" unless args == ""
+          end
+
+          subs = "{%= #{segments.join} %}"
           buff << subs
 
           (original_line_length - subs.lines.size).times do
