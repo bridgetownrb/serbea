@@ -5,9 +5,7 @@
     end
   end
 %}
-{%
-  helper :goober do |content="", &block|
-    content = capture(&block) if block
-    "Totally grand! #{content.split(',').join(';').split(' ').join(',')} Yay!"
-  end
-%}
+{% macro :test_macro do |content="", yo: "ya", &block|
+    content = capture(&block) if block %}
+Totally grand, {{ yo }}! {{ content | split: ',' | join: ';' | split: ' ' | join: ',' }}
+{% end %}

@@ -90,7 +90,6 @@ class SerbView
     end
 
     fake_tmpl = "aha! {{ content }} yes! cool {%= cool %}"
-    fake_tmpl += "{% if defined? blah %}wee!{% end %}"
     
     tmpl = Tilt::SerbeaTemplate.new { fake_tmpl }
 
@@ -118,7 +117,7 @@ end
 Serbea::TemplateEngine.front_matter_preamble = "self.pagedata = YAML.load"
 #Serbea::Pipeline.raise_on_missing_filters = true
 
-tmpl = Tilt.new("template.serb")
+tmpl = Tilt.new(File.join(__dir__, "template.serb"))
 
 #puts "====="
 #puts tmpl.instance_variable_get(:@engine).src
@@ -140,4 +139,11 @@ end
 
 output = tmpl.render(SerbView.new(baz))
 
-puts output
+previous_output = File.read(File.join(__dir__, "test_output.txt"))
+
+if output.strip != previous_output.strip
+  File.write(File.join(__dir__, "bad_output.txt"), output)
+  raise "Output does not match! Saved to bad_output.txt"
+end
+
+puts "\nYay! Test passed."

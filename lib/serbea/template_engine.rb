@@ -127,8 +127,8 @@ module Serbea
   
         buff << text
         if code.length > 0
-          code.sub! /^\{%@/, ""
-          code.sub! /%}$/, ""
+          code.sub!(/^\{%@/, "")
+          code.sub!(/%}$/, "")
           unless ["end", ""].include? code.strip
             original_line_length = code.lines.size
 

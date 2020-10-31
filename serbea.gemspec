@@ -16,6 +16,7 @@ Gem::Specification.new do |spec|
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r!^(test|script|spec|features)/!) }
   spec.require_paths = ["lib"]
 
+  spec.add_runtime_dependency("rake", "~> 13.0")
   spec.add_runtime_dependency("erubi", "~> 1.9")
   spec.add_runtime_dependency("activesupport", "~> 6.0")
   spec.add_runtime_dependency("tilt", "~> 2.0")

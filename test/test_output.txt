@@ -1,0 +1,95 @@
+The title is: I'm a title! :)
+Categories: ["category1", "category2"]
+
+This is totally great
+Um… 
+
+1357
+Whoa
+
+Here we go! ((SO GOOD(WILD)lala)) Yay! 123.0 Done.
+
+----
+
+
+```ruby
+{%= form classes: "raw" do %}
+  <input /> {{ blah blah | blee }}
+{% end %}
+```
+
+
+{%= "another raw example" %}
+
+----
+
+<form class="checkoout">
+  <div class="error"><input type="text" name="first_name" required /></div>
+</form>
+----
+
+groovy not defined :(
+
+
+yipee!
+
+----
+
+Groovy? Groovy! | groovy! :)
+
+----
+
+<input value="&quot;Totally &#39;wild" />
+Selected? true
+
+----
+
+
+Whoa OMG! T h i s   i s   A M A Z I N G ! ;-D
+
+Prepend permanent?
+T h i s   i s   A M A Z I N G !
+
+----
+
+aha! 
+  This is **dope!**
+  aha! 
+    So great.
+ yes! cool cats yes! cool beans yeah
+aha!  yes! cool boxes
+
+<p>
+  Multiply! [10, 30, 60, 90]
+</p>
+
+ARGH! FIRST_NAME: BAD!!
+
+----
+Totally grand, ya! Is,this,a,thing??,Totally,grand;,ya!,I;hope;so!,Wee!
+Totally grand, dude! Best,helper,ever!
+Totally grand, ya! 
+
+Let's not <em>escape</em> this!
+Now let&#39;s &lt;em&gt;escape&lt;/em&gt; by default!
+Now let's NOT <em>escape</em> by default!
+
+Component! < 
+  <p>component 1!</p>
+ >
+Component! < 
+  <p>component 2!</p>
+ >
+Component! <  >
+
+
+Array length: 2
+
+1,2,3
+ha1heha2heha3he
+
+5.10
+
+1-3-6-2-9 Foo | xx!
+
+          Name: lambda test, output: 200          

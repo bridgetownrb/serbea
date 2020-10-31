@@ -36,6 +36,8 @@ Here we go! {{ so_far | upcase | foo "WILD", bar: baz | finalize }} Yay! {{ 123 
 ```
 {% endraw %}
 
+{%%= "another raw example" %}
+
 ----
 
 {%=  form(
@@ -46,11 +48,11 @@ Here we go! {{ so_far | upcase | foo "WILD", bar: baz | finalize }} Yay! {{ 123 
 
 ----
 
-{{ defined?(groovy) ? "HAHA" : "groovy not defined :("  }}
+{{ defined?(groovy) ? "yipee!" : "groovy not defined :("  }}
 
 {% groovy = "   groovy!   " %}
 
-{{ defined?(groovy) ? "HAHA" : "groovy not defined :("  }}
+{{ defined?(groovy) ? "yipee!" : "groovy not defined :("  }}
 
 ----
 
@@ -81,7 +83,7 @@ Prepend permanent?
 
 ----
 
-{%@ "weee/wooo", cool: "beans do yeah" do |testing| %}
+{%@ "weee/wooo", cool: "beans yeah" do |testing| %}
   This is **dope!**
   {%@ "weee/wooo", cool: "cats" do %}
     So great.
@@ -98,15 +100,15 @@ Prepend permanent?
 {{ partial "errors", errors: error_messages |> upcase: }}
 
 ----
-{%= goober do %}
+{%= test_macro do %}
   Is this a thing??
-  {%= goober do %}
+  {%= test_macro do %}
     I hope so!
   {% end %}
   Wee!
 {% end %}
-
-{{ goober "Foo" }}
+{%= test_macro "Best helper ever!", yo: "dude" -%}
+{%= test_macro -%}
 
 {{ "Let's not <em>escape</em> this!" | safe }}
 {{ "Now let's <em>escape</em> by default!" }}
