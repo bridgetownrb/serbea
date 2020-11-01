@@ -2,6 +2,24 @@ require "bundler"
 require "serbea"
 require "ostruct"
 
+class FakeComponentRenderer
+  include Serbea::Helpers
+
+  def initialize(variables = {})
+    @variables = variables
+  end
+
+  def respond_to_missing?(key, include_private = false)
+    @variables.key?(key)
+  end
+
+  def method_missing(key)
+    return @variables[key] if respond_to_missing?(key)
+    
+    super
+  end
+end
+
 class SerbView
   include Serbea::Helpers
 
@@ -93,7 +111,7 @@ class SerbView
     
     tmpl = Tilt::SerbeaTemplate.new { fake_tmpl }
 
-    tmpl.render(Serbea::ComponentRenderer.new(variables))
+    tmpl.render(FakeComponentRenderer.new(variables))
   end
 
   def partial(partial_name, options = {})

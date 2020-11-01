@@ -66,13 +66,11 @@ module Serbea
   
       # Ensure the raw "tag" will strip out all ERB-style processing
       until string.empty?
-        text, code, string = string.partition(/{% raw %}.*?{% endraw %}/m)
+        text, code, string = string.partition(/{% raw %}(.*?){% endraw %}/m)
   
         buff << text
         if code.length > 0
-          buff << code.
-            sub("{% raw %}", "").
-            sub("{% endraw %}", "").
+          buff << $1.
             gsub("{{", "__RAW_START_PRINT__").
             gsub("}}", "__RAW_END_PRINT__").
             gsub("{%", "__RAW_START_EVAL__").
@@ -84,17 +82,16 @@ module Serbea
       string = buff
       buff = ""
       until string.empty?
-        text, code, string = string.partition(/{{.*?}}/m)
+        text, code, string = string.partition(/{{(.*?)}}/m)
   
         buff << text
         if code.length > 0
           original_line_length = code.lines.size
 
-          s = StringScanner.new(code[2...-2])
-          done = false
+          s = StringScanner.new($1)
           escaped_segment = ""
           segments = []
-          while !done
+          until s.eos?
             portion = s.scan_until(/\|>?/)
             if portion
               if portion.end_with?('\|')
@@ -124,7 +121,7 @@ module Serbea
                 # or just the rest will do
                 segments << s.rest
               end
-              done = true
+              s.terminate
             end
           end
 
@@ -148,24 +145,15 @@ module Serbea
         end
       end
 
-      # Process any directives
-      #
-      # TODO: allow custom directives! aka
-      # {%@something whatever %}
-      # {%@script
-      #   const foo = "really? #{really}!"
-      #   alert(foo.toLowerCase())
-      # %}
-      # {%@preact AwesomeChart data={#{ruby_data.to_json}} %}
+      # Process any render directives
       string = buff
       buff = ""
       until string.empty?
-        text, code, string = string.partition(/{%@.*?%}/m)
+        text, code, string = string.partition(/{%@(.*?)%}/m)
   
         buff << text
         if code.length > 0
-          code.sub!(/^\{%@/, "")
-          code.sub!(/%}$/, "")
+          code = $1
           unless ["end", ""].include? code.strip
             original_line_length = code.lines.size
 

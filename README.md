@@ -1,6 +1,6 @@
-👑 Serbea: Similar to ERB, Except Awesomer
+# 👑 Serbea: Similar to ERB, Except Awesomer
 
-The Ruby template language you always dreamed of is here. Le roi est mort, vive le roi!
+The Ruby template language you've always dreamed of is finally here. _Le roi est mort, vive le roi!_
 
 Serbea combines the best ideas from "brace-style" template languages such as Liquid, Nunjucks, Twig, Jinja, Mustache, etc.—and applies them to the world of ERB. You can use Serbea in Rails application, Bridgetown static sites, or pretty much any Ruby scenario you could imagine.
 
