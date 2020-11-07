@@ -40,6 +40,8 @@ module Bridgetown
       #
       # @return [String] The converted content.
       def convert(content, convertible)
+        return content if convertible.data[:template_engine] != "serbea"
+
         serb_view = Bridgetown::SerbeaView.new(convertible)
 
         serb_renderer = Tilt::SerbeaTemplate.new(convertible.relative_path) { content }
@@ -53,31 +55,22 @@ module Bridgetown
         end
       end
 
-      def matches(ext, convertible = nil)
-        if convertible
-          if convertible.data[:template_engine] == "serbea" ||
-              (convertible.data[:template_engine].nil? &&
-                @config[:template_engine] == "serbea")
-            return true
-          end
+      def matches(ext, convertible)
+        if convertible.data[:template_engine] == "serbea" ||
+            (convertible.data[:template_engine].nil? &&
+              @config[:template_engine] == "serbea")
+          convertible.data[:template_engine] = "serbea"
+          return true
         end
 
-        super(ext)
+        super(ext).tap do |ext_matches|
+          convertible.data[:template_engine] = "serbea" if ext_matches
+        end
       end
 
       def output_ext(ext)
         ext == ".serb" ? ".html" : ext
       end
     end
-  end
-end
-
-Bridgetown::Hooks.register :site, :pre_render, reloadable: false do |site|
-  # make sure Liquid doesn't find {% %} and decide to process Serbea code!
-  site.contents.each do |convertible|
-    convertible.data.render_with_liquid = false if convertible.extname == ".serb"
-  end
-  site.layouts.values.each do |convertible|
-    convertible.data.render_with_liquid = false if convertible.ext == ".serb"
   end
 end

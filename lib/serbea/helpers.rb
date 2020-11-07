@@ -22,7 +22,7 @@ module Serbea
       @_erbout = previous_buffer_state
       @output_buffer = previous_ob_state
 
-      result.html_safe
+      result&.html_safe
     end
   
     def pipeline(context, value)
