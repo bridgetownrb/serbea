@@ -32,9 +32,7 @@ if defined?(Rails::Railtie)
       ActiveSupport.on_load(:action_view) do
         require "serbea/rails_support"
 
-        app.config.after_initialize do
-          Serbea::Plugin.initialize_frontmatter
-        end
+        ActionController::Base.include Serbea::Rails::FrontmatterControllerActions
       end
     end
   end
