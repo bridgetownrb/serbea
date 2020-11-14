@@ -31,6 +31,10 @@ if defined?(Rails::Railtie)
     initializer :serbea do |app|
       ActiveSupport.on_load(:action_view) do
         require "serbea/rails_support"
+
+        app.config.after_initialize do
+          Serbea::Plugin.initialize_frontmatter
+        end
       end
     end
   end

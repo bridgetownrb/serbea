@@ -15,6 +15,19 @@ module Serbea
 
       new.compile(template, source)
     end
+
+    def self.initialize_frontmatter
+      if defined?(ApplicationHelper)
+        Serbea::TemplateEngine.front_matter_preamble = "self.set_page_frontmatter = local_frontmatter = YAML.load"
+      
+        ApplicationHelper.define_method(:set_page_frontmatter=) do |data|
+          @frontmatter ||= HashWithDotAccess::Hash.new
+          @frontmatter.update(data)
+        end
+      
+        ApplicationController.before_action { @frontmatter ||= HashWithDotAccess::Hash.new }
+      end
+    end
   end
 end
 
