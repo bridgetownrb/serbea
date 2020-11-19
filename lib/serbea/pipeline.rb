@@ -1,12 +1,13 @@
 require "active_support/core_ext/string/output_safety"
+require "active_support/core_ext/object/blank"
 
 module Serbea
   class Pipeline
-    def self.exec(template, input: (no_input_passed = true; nil), include_helpers: nil)
+    def self.exec(template, locals = {}, include_helpers: nil, **kwargs)
       anon = Class.new do
         include Serbea::Helpers
 
-        attr_accessor :input, :output
+        attr_accessor :output
       end
 
       if include_helpers
@@ -14,12 +15,11 @@ module Serbea
       end
 
       pipeline_obj = anon.new
-      pipeline_obj.input = input unless no_input_passed
 
       full_template = "{{ #{template} | assign_to: :output }}"
 
       tmpl = Tilt::SerbeaTemplate.new { full_template }
-      tmpl.render(pipeline_obj)
+      tmpl.render(pipeline_obj, locals.presence || kwargs)
 
       pipeline_obj.output
     end
@@ -54,8 +54,9 @@ module Serbea
       @value_methods_denylist ||= Set.new
     end
 
-    def initialize(context, value)
-      @context = context
+    def initialize(binding, value)
+      @binding = binding
+      @context = binding.receiver
       @value = value
     end
 
@@ -82,6 +83,19 @@ module Serbea
           @value = @context.send(name, @value, *args, **kwargs)
         else
           @value = @context.send(name, @value, *args)
+        end
+      elsif @binding.local_variables.include?(name)
+        var = @binding.local_variable_get(name)
+        if var.respond_to?(:call)
+          unless kwargs.empty?
+            @value = var.call(@value, *args, **kwargs)
+          else
+            @value = var.call(@value, *args)
+          end
+        else
+          "Serbea warning: Filter #{name} does not respond to call".tap do |warning|
+            self.class.raise_on_missing_filters ? raise(warning) : STDERR.puts(warning)
+          end
         end
       else
         "Serbea warning: Filter not found: #{name}".tap do |warning|

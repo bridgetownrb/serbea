@@ -8,11 +8,12 @@ module Serbea
 
     def capture(obj = nil, &block)
       previous_buffer_state = @_erbout
-      @_erbout = Serbea::Buffer.new
+      @_erbout = Serbea::OutputBuffer.new
 
       # For compatibility with ActionView, not used by Bridgetown normally
       previous_ob_state = @output_buffer
-      @output_buffer = Serbea::Buffer.new
+      @output_buffer = Serbea::OutputBuffer.new
+
 
       result = instance_exec(obj, &block)
       if @output_buffer != ""
@@ -32,11 +33,11 @@ module Serbea
     def helper(name, &helper_block)
       self.class.define_method(name) do |*args, &block|
         previous_buffer_state = @_erbout
-        @_erbout = Serbea::Buffer.new
+        @_erbout = Serbea::OutputBuffer.new
   
         # For compatibility with ActionView, not used by Bridgetown normally
         previous_ob_state = @output_buffer
-        @output_buffer = Serbea::Buffer.new
+        @output_buffer = Serbea::OutputBuffer.new
   
         result = helper_block.call(*args, &block)
         if @output_buffer != ""

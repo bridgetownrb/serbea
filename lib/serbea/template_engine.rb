@@ -1,7 +1,7 @@
 require "strscan"
 
 module Serbea
-  class Buffer < String
+  class OutputBuffer < String
     def concat_to_s(input)
       concat input.to_s
     end
@@ -125,7 +125,7 @@ module Serbea
             end
           end
 
-          segments[0] = "pipeline(self, (#{segments[0].strip}))"
+          segments[0] = "pipeline(binding, (#{segments[0].strip}))"
           segments[1..-1].each_with_index do |segment, index|
             filter, args = segment.strip.match(/([^ :]*)(.*)/m).captures
             segments[index + 1] = ".filter(:" + filter

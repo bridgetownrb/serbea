@@ -10,7 +10,7 @@ module Tilt
     def prepare
       @options.merge!(
         outvar: "@_erbout",
-        bufval: "Serbea::Buffer.new", 
+        bufval: "Serbea::OutputBuffer.new", 
         literal_prefix: "{%",
         literal_postfix: "%}",
         engine_class: Serbea::TemplateEngine

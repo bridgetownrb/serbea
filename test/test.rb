@@ -78,7 +78,7 @@ class SerbView
 
   def form(classname:)
     previous_buffer_state = @_erbout
-    @_erbout = Serbea::Buffer.new
+    @_erbout = Serbea::OutputBuffer.new
     fields = Fields.new
     str = "<form class=\"#{classname}\">"
     str << yield(fields)
