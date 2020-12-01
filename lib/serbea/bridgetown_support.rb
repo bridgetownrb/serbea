@@ -2,8 +2,10 @@ require "serbea/rouge_lexer"
 require "bridgetown-core"
 
 module Bridgetown
-  class SerbeaView < RubyTemplateView
+  class SerbeaView < ERBView
+    alias_method :_erb_capture, :capture
     include Serbea::Helpers
+    alias_method :capture, :_erb_capture
 
     def partial(partial_name, options = {}, &block)
       options.merge!(options[:locals]) if options[:locals]
@@ -16,14 +18,6 @@ module Bridgetown
       Tilt::SerbeaTemplate.new(
         site.in_source_dir(site.config[:partials_dir], "#{partial_name}.serb")
       ).render(self, options)
-    end
-
-    def markdownify(input = nil, &block)
-      content = Bridgetown::Utils.reindent_for_markdown(
-        block.nil? ? input.to_s : capture(&block)
-      )
-      converter = site.find_converter_instance(Bridgetown::Converters::Markdown)
-      converter.convert(content).strip
     end
   end
 
