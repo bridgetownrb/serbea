@@ -6,52 +6,31 @@ module Serbea
       Serbea::Pipeline.deny_value_method %i(escape h prepend append assign_to)
     end
 
-    def capture(obj = nil, &block)
+    def capture(*args)
       previous_buffer_state = @_erbout
       @_erbout = Serbea::OutputBuffer.new
-
-      # For compatibility with ActionView, not used by Bridgetown normally
-      previous_ob_state = @output_buffer
-      @output_buffer = Serbea::OutputBuffer.new
-
-
-      result = instance_exec(obj, &block)
-      if @output_buffer != ""
-        # use Rails' ActionView buffer if present
-        result = @output_buffer
-      end
+      result = yield(*args)
       @_erbout = previous_buffer_state
-      @output_buffer = previous_ob_state
 
       result&.html_safe
     end
-  
+
     def pipeline(context, value)
       Pipeline.new(context, value)
     end
-  
+
     def helper(name, &helper_block)
       self.class.define_method(name) do |*args, &block|
         previous_buffer_state = @_erbout
         @_erbout = Serbea::OutputBuffer.new
-  
-        # For compatibility with ActionView, not used by Bridgetown normally
-        previous_ob_state = @output_buffer
-        @output_buffer = Serbea::OutputBuffer.new
-  
         result = helper_block.call(*args, &block)
-        if @output_buffer != ""
-          # use Rails' ActionView buffer if present
-          result = @output_buffer
-        end
         @_erbout = previous_buffer_state
-        @output_buffer = previous_ob_state
-  
+
         result.is_a?(String) ? result.html_safe : result
       end
     end
     alias_method :macro, :helper
-  
+
     def h(input)
       ERB::Util.h(input.to_s)
     end
