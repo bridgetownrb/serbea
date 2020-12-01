@@ -14,11 +14,42 @@ module Serbea
   class TemplateEngine < Erubi::Engine
     FRONT_MATTER_REGEXP = %r!\A(---\s*\n.*?\n?)^((---|\.\.\.)\s*$\n?)!m.freeze
 
-    def self.render_directive=(directive)
-      @render_directive = directive
+    def self.directive(new_directive, directive_resolution)
+      directives[new_directive.to_s] = directive_resolution
     end
-    def self.render_directive
-      @render_directive ||= "render"
+    def self.directives
+      @directives ||= {
+        "@" => ->(code, buffer) do
+          original_line_length = code.lines.size
+
+          pieces = code.split(" ")
+          if pieces[0].start_with?(/[A-Z]/) # Ruby class name
+            pieces[0].prepend " "
+            pieces[0] << ".new("
+          else # string or something else
+            pieces[0].prepend "("
+          end
+
+          includes_block = false
+          pieces.reverse.each do |piece|
+            if piece == "do" && (pieces.last == "do" || pieces.last.end_with?("|"))
+              piece.prepend(") ")
+              includes_block = true
+              break
+            end
+          end
+
+          if includes_block
+            buffer << "{%= render#{pieces.join(" ")} %}"
+          else
+            pieces.last << ")"
+            buffer << "{%= render#{pieces.join(" ")} %}"
+          end
+          (original_line_length - 1).times do
+            buffer << "\n{% %}" # preserve original directive line length
+          end
+        end
+      }
     end
 
     def self.front_matter_preamble=(varname)
@@ -149,39 +180,19 @@ module Serbea
       string = buff
       buff = ""
       until string.empty?
-        text, code, string = string.partition(/{%@(.*?)%}/m)
-  
+        text, code, string = string.partition(/{%@([a-z_]+)?(.*?)%}/m)
+
         buff << text
         if code.length > 0
-          code = $1
+          directive = $1
+          code = $2
           unless ["end", ""].include? code.strip
-            original_line_length = code.lines.size
+            directive = $1 ? self.class.directives[$1] : self.class.directives["@"]
 
-            pieces = code.split(" ")
-            if pieces[0].start_with?(/[A-Z]/) # Ruby class name
-              pieces[0].prepend " "
-              pieces[0] << ".new("
-            else # string or something else
-              pieces[0].prepend "("
-            end
-
-            includes_block = false
-            pieces.reverse.each do |piece|
-              if piece == "do" && (pieces.last == "do" || pieces.last.end_with?("|"))
-                piece.prepend(") ")
-                includes_block = true
-                break
-              end
-            end
-
-            if includes_block
-              buff << "{%= #{self.class.render_directive}#{pieces.join(" ")} %}"
+            if directive
+              directive.(code, buff)
             else
-              pieces.last << ")"
-              buff << "{%= #{self.class.render_directive}#{pieces.join(" ")} %}"
-            end
-            (original_line_length - 1).times do
-              buff << "\n{% %}" # preserve original directive line length
+              raise "Handler for Serbea template directive `#{$1}' not found"
             end
           else
             buff << "{% end %}"

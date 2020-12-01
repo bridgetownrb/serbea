@@ -37,4 +37,15 @@ module Serbea
   end
 end
 
+Serbea::TemplateEngine.directive :form, ->(code, buffer) do
+  buffer << "{%= form_with model:"
+  buffer << code
+  buffer << " %}"
+end
+Serbea::TemplateEngine.directive :_, ->(code, buffer) do
+  buffer << "{%= content_tag "
+  buffer << code
+  buffer << " %}"
+end
+
 ActionView::Template.register_template_handler(:serb, Serbea::Rails::TemplateHandler)

@@ -48,6 +48,17 @@ Here we go! {{ so_far|upcase|foo "WILD", bar: baz|finalize }} Yay! {{ 123   |   
 
 ----
 
+{%@form :the_model do |f| %}
+{% end %}
+
+----
+
+{%@_ :div, class: "wee" do %}
+  {%@_ :span, "That's interesting!" %}
+{%@ %}
+
+----
+
 {{ defined?(groovy) ? "yipee!" : "groovy not defined :("  }}
 
 {% groovy = "   groovy!   " %}

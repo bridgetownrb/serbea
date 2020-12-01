@@ -28,6 +28,14 @@ Here we go! ((SO GOOD(WILD)lala)) Yay! 123.0 Done.
 </form>
 ----
 
+<form model='the_model'></form>
+----
+
+<div class="wee">
+  <span>That's interesting!</span>
+</div>
+----
+
 groovy not defined :(
 
 

@@ -88,6 +88,25 @@ class SerbView
     str
   end
 
+  def form_with(model:)
+    "<form model='#{model}'></form>"
+  end
+
+  def content_tag(tag_name, *attrs, &block)
+    if block
+      content = capture(&block)
+    else
+      content = attrs.first
+      attrs = attrs[1..]
+    end
+    processed_attrs = ""
+    attrs[0].each do |key, value|
+      processed_attrs << " #{key}=\"#{value}\""
+    end if attrs.present?
+
+    "<#{tag_name}#{processed_attrs}>#{content}</#{tag_name}>"
+  end
+
   def errors(input, errors = {})
     if errors && errors.key?(input.name)
       "<div class=\"error\">" + input.to_s + "</div>"
@@ -133,6 +152,16 @@ end
 #tmpl = Tilt::SerbeaTemplate.new { simple_template }
 
 Serbea::TemplateEngine.front_matter_preamble = "self.pagedata = YAML.load"
+Serbea::TemplateEngine.directive :form, ->(code, buffer) do
+  buffer << "{%= form_with model:"
+  buffer << code
+  buffer << " %}"
+end
+Serbea::TemplateEngine.directive :_, ->(code, buffer) do
+  buffer << "{%= content_tag "
+  buffer << code
+  buffer << " %}"
+end
 #Serbea::Pipeline.raise_on_missing_filters = true
 
 tmpl = Tilt.new(File.join(__dir__, "template.serb"))
