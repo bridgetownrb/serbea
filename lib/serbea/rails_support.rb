@@ -43,7 +43,7 @@ Serbea::TemplateEngine.directive :form, ->(code, buffer) do
   buffer << " %}"
 end
 Serbea::TemplateEngine.directive :_, ->(code, buffer) do
-  buffer << "{%= content_tag "
+  buffer << "{%= tag."
   buffer << code
   buffer << " %}"
 end
