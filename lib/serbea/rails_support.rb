@@ -42,9 +42,17 @@ Serbea::TemplateEngine.directive :form, ->(code, buffer) do
   buffer << code
   buffer << " %}"
 end
+
 Serbea::TemplateEngine.directive :_, ->(code, buffer) do
-  buffer << "{%= tag."
-  buffer << code
+  tag_name, space, params = code.lstrip.partition(%r(\s)m)
+
+  if tag_name.end_with?(":")
+    tag_name.chomp!(":")
+    tag_name = ":#{tag_name}" unless tag_name.start_with?(":")
+  end
+
+  buffer << "{%= tag.tag_string "
+  buffer << tag_name << ", " << params
   buffer << " %}"
 end
 

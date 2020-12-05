@@ -17,11 +17,10 @@ module Serbea
     def self.directive(new_directive, directive_resolution)
       directives[new_directive.to_s] = directive_resolution
     end
+
     def self.directives
       @directives ||= {
         "@" => ->(code, buffer) do
-          original_line_length = code.lines.size
-
           pieces = code.split(" ")
           if pieces[0].start_with?(/[A-Z]/) # Ruby class name
             pieces[0].prepend " "
@@ -45,9 +44,6 @@ module Serbea
             pieces.last << ")"
             buffer << "{%= render#{pieces.join(" ")} %}"
           end
-          (original_line_length - 1).times do
-            buffer << "\n{% %}" # preserve original directive line length
-          end
         end
       }
     end
@@ -55,30 +51,21 @@ module Serbea
     def self.front_matter_preamble=(varname)
       @front_matter_preamble = varname
     end
+
     def self.front_matter_preamble
       @front_matter_preamble ||= "frontmatter = YAML.load"
     end
-  
+
     def self.has_yaml_header?(template)
       template.lines.first&.match? %r!\A---\s*\r?\n!
     end
-  
+
     def initialize(input, properties={})
       properties[:regexp] = /{%(={1,2}|-|\#|%)?(.*?)([-=])?%}([ \t]*\r?\n)?/m
       properties[:strip_front_matter] = true unless properties.key?(:strip_front_matter)
       super process_serbea_input(input, properties), properties
     end
-  
-    def add_postamble(postamble)
-      src << postamble
-      src << "#{@bufvar}.html_safe"
-  
-      src.gsub!("__RAW_START_PRINT__", "{{")
-      src.gsub!("__RAW_END_PRINT__", "}}")
-      src.gsub!("__RAW_START_EVAL__", "{%")
-      src.gsub!("__RAW_END_EVAL__", "%}")
-    end
-  
+
     def process_serbea_input(template, properties)
       buff = ""
   
@@ -190,7 +177,11 @@ module Serbea
             directive = $1 ? self.class.directives[$1] : self.class.directives["@"]
 
             if directive
+              additional_length = "#{buff}#{code}".lines.size
               directive.(code, buff)
+              (additional_length - buff.lines.size).times do
+                buff << "{% %}\n" # preserve original directive line length
+              end
             else
               raise "Handler for Serbea template directive `#{$1}' not found"
             end
@@ -202,7 +193,7 @@ module Serbea
 
       buff
     end
-  
+
     private
 
     def add_code(code)
@@ -226,5 +217,15 @@ module Serbea
     def add_expression_result_escaped(code)
       add_expression_result(code)
     end
-  end # class
+
+    def add_postamble(postamble)
+      src << postamble
+      src << "#{@bufvar}.html_safe"
+  
+      src.gsub!("__RAW_START_PRINT__", "{{")
+      src.gsub!("__RAW_END_PRINT__", "}}")
+      src.gsub!("__RAW_START_EVAL__", "{%")
+      src.gsub!("__RAW_END_EVAL__", "%}")
+    end
+  end
 end
