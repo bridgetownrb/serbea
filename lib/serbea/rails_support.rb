@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "hash_with_dot_access"
+
 module Serbea
   module Rails
     module FrontmatterHelpers
