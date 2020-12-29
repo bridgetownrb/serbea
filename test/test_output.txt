@@ -76,7 +76,9 @@ ARGH! FIRST_NAME: BAD!!
 ----
 Totally grand, ya! Is,this,a,thing??,Totally,grand;,ya!,I;hope;so!,Wee!
 Totally grand, dude! Best,helper,ever!
+
 Totally grand, ya! 
+
 
 Let's not <em>escape</em> this!
 Now let&#39;s &lt;em&gt;escape&lt;/em&gt; by default!
@@ -103,3 +105,23 @@ ha1heha2heha3he
           Name: lambda test, output: 200          
 
 yo
+
+<!-- neato: 
+  This is AWESOME
+ -->
+<!-- also-neato: 
+  This is ALSO AWESOME
+ -->
+<turbo-stream action="append" target="clearances">
+  <template>
+    <div id='clearance_5'>Append this to .clearances</div>
+  </template>
+</turbo-stream>
+
+
+<str-test
+      class="many &quot;classes&quot;"
+      data-json="{&quot;foo&quot;:&quot;ba&lt;r&gt;&quot;,&quot;baz&quot;:&quot;&amp;cool&quot;}"
+      data-total="#{3+9}">
+
+</str-test>

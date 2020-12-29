@@ -118,8 +118,8 @@ Prepend permanent?
   {% end %}
   Wee!
 {% end %}
-{%= test_macro "Best helper ever!", yo: "dude" -%}
-{%= test_macro -%}
+{%= test_macro "Best helper ever!", yo: "dude" %}
+{%= test_macro %}
 
 {{ "Let's not <em>escape</em> this!" | safe }}
 {{ "Now let's <em>escape</em> by default!" }}
@@ -162,3 +162,20 @@ Prepend permanent?
 
 {% use_local_helper = ->(input) { input.downcase } %}
 {{ "YO" | use_local_helper }}
+
+{%@frame "neato" %}
+  This is AWESOME
+{%@ %}
+
+{%@frame "also-neato" do %}
+  This is ALSO AWESOME
+{%@ %}
+
+{%@append "clearances", "<div id='clearance_5'>Append this to .clearances</div>" %}
+
+{%@` <str-test
+      class="#{%w(many "classes").join(" ")}"
+      data-json="#{{foo: "ba<r>", baz: "&cool"}.to_json}"
+      data-total="\#{3+9}"> `%}
+
+</str-test>

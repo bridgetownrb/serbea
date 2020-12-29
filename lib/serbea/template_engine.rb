@@ -44,6 +44,11 @@ module Serbea
             pieces.last << ")"
             buffer << "{%= render#{pieces.join(" ")} %}"
           end
+        end,
+        "`" => ->(code, buffer) do
+          buffer << "{%= %`"
+          buffer << code.gsub(%r("([^\\]?)\#{(.*?)}"), "\"\\1\#{h(\\2)}\"")
+          buffer << ".strip %}"
         end
       }
     end
@@ -167,7 +172,7 @@ module Serbea
       string = buff
       buff = ""
       until string.empty?
-        text, code, string = string.partition(/{%@([a-z_]+)?(.*?)%}/m)
+        text, code, string = string.partition(/{%@([a-z_`]+)?(.*?)%}/m)
 
         buff << text
         if code.length > 0

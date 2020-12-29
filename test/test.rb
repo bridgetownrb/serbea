@@ -1,6 +1,7 @@
 require "bundler"
 require "serbea"
 require "ostruct"
+require "json"
 
 class FakeComponentRenderer
   include Serbea::Helpers
@@ -17,6 +18,18 @@ class FakeComponentRenderer
     return @variables[key] if respond_to_missing?(key)
     
     super
+  end
+end
+
+class StreamDSL
+  def method_missing(key, *args)
+    <<~HTML
+      <turbo-stream action="#{key}" target="#{args[0]}">
+        <template>
+          #{args[1]}
+        </template>
+      </turbo-stream>
+    HTML
   end
 end
 
@@ -145,6 +158,14 @@ class SerbView
     ).render(self, options)
   end
   alias_method :import, :partial
+
+  def turbo_frame_tag(tag, &block)
+    "<!-- #{tag}: #{capture(&block)} -->"
+  end
+
+  def turbo_stream
+    StreamDSL.new
+  end
 end
 
 
@@ -157,6 +178,19 @@ Serbea::TemplateEngine.directive :form, ->(code, buffer) do
   buffer << code
   buffer << " %}"
 end
+
+Serbea::TemplateEngine.directive :frame, ->(code, buffer) do
+  buffer << "{%= turbo_frame_tag "
+  buffer << code.strip.sub(/do$/, "")
+  buffer << " do %}"
+end
+
+Serbea::TemplateEngine.directive :append, ->(code, buffer) do
+  buffer << "{%= turbo_stream.append "
+  buffer << code
+  buffer << " %}"
+end
+
 Serbea::TemplateEngine.directive :_, ->(code, buffer) do
   buffer << "{%= content_tag "
   buffer << code
