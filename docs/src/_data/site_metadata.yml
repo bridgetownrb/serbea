@@ -1,0 +1,11 @@
+# Site settings
+# These are used to personalize your new site. If you look in the HTML files,
+# you will see them accessed via {{ site.metadata.title }}, {{ site.metadata.email }}, and so on.
+# You can create any custom variable you would like, and they will be accessible
+# in the templates via {{ site.metadata.myvariable }}.
+
+title: Serbea
+tagline: Similar to ERB, Except Awesomer
+email: your-email@example.com
+description: >- # this means to ignore newlines until "baseurl:"
+  The Ruby template engine you didn't realize you needed. Until now.

@@ -1,0 +1,6 @@
+url: "https://www.serbea.dev"
+permalink: pretty
+
+timezone: America/Los_Angeles
+
+template_engine: serbea

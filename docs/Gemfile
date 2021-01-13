@@ -1,0 +1,5 @@
+source "https://rubygems.org"
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+
+gem "bridgetown", "~> 0.19"
+gem "serbea", "~> 0.10", :group => :bridgetown_plugins

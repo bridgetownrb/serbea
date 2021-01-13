@@ -16,3 +16,6 @@ mkmf.log
 Gemfile.lock
 .bundle
 .ruby-version
+
+# Mac files
+.DS_Store
