@@ -3,6 +3,7 @@ layout: home
 ---
 
 ### Serbea is the Ruby template engine you didn't realize you needed. Until now.
+{:.no_toc}
 
 **Serbea** combines the best ideas from "brace-style" template languages such as Liquid, Nunjucks, Twig, Jinja, Mustache, etc.—and applies them to the world of **ERB**. You can use Serbea in Rails applications, Bridgetown static sites, or pretty much any Ruby scenario you could imagine.
 
