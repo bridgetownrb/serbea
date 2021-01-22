@@ -170,6 +170,7 @@ Serbea templates are typically saved using a `.serb` extension. If you use VS Co
 
 To convert Serbea code in a basic Ruby script, all you have to do is require the Serbea gem, include the necessary helpers module, and use the Tilt interface to load and render the template. Example:
 
+{% raw %}
 ```ruby
 require "serbea"
 include Serbea::Helpers
@@ -179,6 +180,7 @@ tmpl.render(self, world: "World")
 
 # Hello World!
 ```
+{% endraw %}
 
 You'll likely want to bind to a dedicated view object instead of `self` as in the example above, since that view object can include the Serbea helpers without fear of any collision with existing object methods in your codebase.
 
