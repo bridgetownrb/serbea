@@ -43,7 +43,7 @@ layout: home
   {%@remove "timeline-read-more" %}
   {%@append "timeline" do %}
     {%@ partial: "posts", formats: [:html] %}
-  {%@ %}
+  {% end %}
   ```
 * Built-in frontmatter support. Now you can access the variables written into a top YAML block within your templates. In any Rails view, including layouts, you'll have access to the `@frontmatter` ivar which is a merged `HashWithDotAccess::Hash` with data from any part of the view tree (partials, pages, layout).
 
