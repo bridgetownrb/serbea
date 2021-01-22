@@ -8,6 +8,11 @@ layout: home
 
 **Serbea**. Finally, something to crow(n) about. _Le roi est mort, vive le roi!_
 
+### Table of Contents
+{:.no_toc}
+* …
+{:toc}
+
 ### Features and Syntax
 
 {% raw %}
