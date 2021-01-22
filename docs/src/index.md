@@ -180,11 +180,11 @@ tmpl.render(self, world: "World")
 
 # Hello World!
 ```
-{% endraw %}
 
 You'll likely want to bind to a dedicated view object instead of `self` as in the example above, since that view object can include the Serbea helpers without fear of any collision with existing object methods in your codebase.
 
 Serbea helpers include `pipeline` which faciliates the `{{ }}` template syntax, `capture`, `helper`, `safe`, `escape`, and `assign_to`.
+{% endraw %}
 
 ### Rails Support
 
@@ -193,6 +193,25 @@ Serbea fully supports Rails (tested with Rails 6), and even includes special dir
 Simply use the `.serb` extension wherever you would use `.erb` normally. You can freely mix 'n' match Serbea templates with other template engines, so for instance `index.html.erb` and `show.html.serb` can live side-by-side.
 
 **Note:** if you use a Serbea template as a _layout_, you may encounter some subtle rendering issues with ERB page templates that use the layout. It is recommended you use Serbea for layouts only if you intend to standardize on Serbea for your application.
+
+**Upgrade your helpers!** While you can use the same kind of syntax for helpers you may be accustomed to in ERB, using the pipeline syntax can be far more enjoyable and better express intent. For example, instead of confusing nested method calls like this:
+
+{% raw %}
+```erb
+Here's a <%= link_to(highlight("  link for you  ".strip.titleize, "you"), other_page_path) %>.
+```
+
+You could instead write this:
+
+```serb
+Here's a {{ "  link for you  " | strip | titleize | highlight: "you" | link_to: other_page_path }}
+```
+
+which is _far_ easier to parse visually and less likely to cause bugs due to nesting errors.
+
+**Stay Safe!** In pipelines, Serbea uses the same safe escaping logic you've experienced with ERB. So if you were to put `{{ "<p>Aha!</p>" }}` in a template, you don't get an HTML paragraph, you get the literal characters of the p tags. You would have to use the `safe` (aliased `raw`) filter in order to get working HTML output. _However_, that is NOT the case with expressions. `{%= "<p>Bingo!</p>" %}` outputs that text verbatim and you get a valid HTML paragraph. So use expressions sparingly and only in cases where you know the values have already been cleansed (e.g., rendering partials or components, using form helpers, yielding in layouts, etc.). Alternatively, you can use the `escape` (aliased `h`) helper: `{%= escape "<p>Bingo!</p>" %}`.
+
+{% endraw %}
 
 ### Bridgetown Support
 
@@ -213,7 +232,11 @@ layout: bulmatown/post
 {{ liquid_render "subscribe" }}
 
 {% if page.data.image_credit %}
-  <p class="mt-6 is-size-7 has-text-centered"><em>Banner image by <a href="{{ page.data.image_credit.url | safe }}">{{ page.data.image_credit.label }}</a></em></p>
+  <p class="mt-6 is-size-7 has-text-centered">
+    <em>Banner image by <a href="{{ page.data.image_credit.url | safe }}">
+      {{ page.data.image_credit.label }}
+    </a></em>
+  </p>
 {% end %}
 
 {% posts = page.related_posts[0...2] %}
@@ -228,3 +251,8 @@ layout: bulmatown/post
 {% end %}
 ```
 {% endraw %}
+
+
+### How Pipelines Work Under the Hood
+
+Documentation forthcoming!
