@@ -149,3 +149,80 @@ Array length: {{ @array_length.length }}
 }}
 
 The answer of course is: **{{ @array_length.length }}**
+
+### Installation and Usage
+
+Simply add the Serbea gem to your `Gemfile`:
+
+```
+bundle add serbea
+```
+
+or install standalone:
+
+```
+gem install serbea
+```
+
+If you're using [Bridgetown](https://www.bridgetownrb.com), make sure it's included in the `bridgetown_plugins` group.
+
+Serbea templates are typically saved using a `.serb` extension. If you use VS Code as your editor, there is a [VS Code extension](https://marketplace.visualstudio.com/items?itemName=whitefusion.serbea) to enable Serbea syntax highlighting as well as palette commands to convert selected ERB syntax to Serbea.
+
+To convert Serbea code in a basic Ruby script, all you have to do is require the Serbea gem, include the necessary helpers module, and use the Tilt interface to load and render the template. Example:
+
+```ruby
+require "serbea"
+include Serbea::Helpers
+
+tmpl = Tilt::SerbeaTemplate.new { "Hello {{ world | append: '!' }}" }
+tmpl.render(self, world: "World")
+
+# Hello World!
+```
+
+You'll likely want to bind to a dedicated view object instead of `self` as in the example above, since that view object can include the Serbea helpers without fear of any collision with existing object methods in your codebase.
+
+Serbea helpers include `pipeline` which faciliates the `{{ }}` template syntax, `capture`, `helper`, `safe`, `escape`, and `assign_to`.
+
+### Rails Support
+
+Serbea fully supports Rails (tested with Rails 6), and even includes special directives for Turbo Streams as highlighted above.
+
+Simply use the `.serb` extension wherever you would use `.erb` normally. You can freely mix 'n' match Serbea templates with other template engines, so for instance `index.html.erb` and `show.html.serb` can live side-by-side.
+
+**Note:** if you use a Serbea template as a _layout_, you may encounter some subtle rendering issues with ERB page templates that use the layout. It is recommended you use Serbea for layouts only if you intend to standardize on Serbea for your application.
+
+### Bridgetown Support
+
+Serbea fully supports [Bridgetown](https://www.bridgetownrb.com). In fact, Serbea is an excellent upgrade from Liquid as the syntax initially looks familar, yet it enbles the full power of real Ruby in your templates.
+
+Out of the box, you can name pages and partials with a `.serb` extension. But for even more flexibility, you can add `template_engine: serbea` to your `bridgetown.config.yml` configuration. This will default all pages and documents to Serbea unless you specifically use front matter to choose a different template engine (or use an extension such as `.liquid` or `.erb`).
+
+Here's an abreviated example of what the Post layout template looks like on the [RUBY3.dev](https://www.ruby3.dev) blog:
+
+{% raw %}
+```serb
+---
+layout: bulmatown/post
+---
+
+<div class="content-column">{%= yield %}</div>
+
+{{ liquid_render "subscribe" }}
+
+{% if page.data.image_credit %}
+  <p class="mt-6 is-size-7 has-text-centered"><em>Banner image by <a href="{{ page.data.image_credit.url | safe }}">{{ page.data.image_credit.label }}</a></em></p>
+{% end %}
+
+{% posts = page.related_posts[0...2] %}
+{{ liquid_render "bulmatown/collection", collection: posts, metadata: site.metadata }}
+
+{% if page.related_posts.size > 2 %}
+  <a href="/articles">Read More Articles</a>
+{% end %}
+
+{%= markdownify do %}
+  {{ liquid_render "sponsor" }}
+{% end %}
+```
+{% endraw %}
