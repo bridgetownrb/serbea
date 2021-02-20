@@ -29,6 +29,8 @@ Here we go! ((SO GOOD(WILD)lala)) Yay! 123.0 Done.
 ----
 
 <form model='the_model'></form>
+<form model='the_model'></form>
+<form model='the_model'></form>
 ----
 
 <div class="wee">

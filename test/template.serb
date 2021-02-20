@@ -48,7 +48,13 @@ Here we go! {{ so_far|upcase|foo "WILD", bar: baz|finalize }} Yay! {{ 123   |   
 
 ----
 
-{%@form :the_model method: :put do |f| %}
+{%@form :the_model do |f| %}
+{% end %}
+
+{%@form :the_model extra_params: true do |f| %}
+{% end %}
+
+{%@form :the_model, extra_params: true do |f| %}
 {% end %}
 
 ----

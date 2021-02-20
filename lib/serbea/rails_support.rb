@@ -42,9 +42,10 @@ end
 Serbea::TemplateEngine.directive :form, ->(code, buffer) do
   model_name, space, params = code.lstrip.partition(%r(\s)m)
   model_name.chomp!(",")
+  model_name = "#{model_name}," unless params.lstrip.start_with?("do", "{")
 
   buffer << "{%= form_with model: "
-  buffer << model_name << ", " << params
+  buffer << model_name << " #{params}"
   buffer << " %}"
 end
 
