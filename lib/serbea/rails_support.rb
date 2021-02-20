@@ -40,8 +40,11 @@ module Serbea
 end
 
 Serbea::TemplateEngine.directive :form, ->(code, buffer) do
-  buffer << "{%= form_with model:"
-  buffer << code
+  model_name, space, params = code.lstrip.partition(%r(\s)m)
+  model_name.chomp!(",")
+
+  buffer << "{%= form_with model: "
+  buffer << model_name << ", " << params
   buffer << " %}"
 end
 

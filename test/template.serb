@@ -48,7 +48,7 @@ Here we go! {{ so_far|upcase|foo "WILD", bar: baz|finalize }} Yay! {{ 123   |   
 
 ----
 
-{%@form :the_model do |f| %}
+{%@form :the_model method: :put do |f| %}
 {% end %}
 
 ----
