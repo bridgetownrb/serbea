@@ -9,7 +9,8 @@ module Serbea
     def capture(*args)
       previous_buffer_state = @_erbout
       @_erbout = Serbea::OutputBuffer.new
-      result = yield(*args)
+      yield(*args)
+      result = @_erbout
       @_erbout = previous_buffer_state
 
       result&.html_safe
@@ -20,10 +21,10 @@ module Serbea
     end
 
     def helper(name, &helper_block)
-      self.class.define_method(name) do |*args, &block|
+      self.class.define_method(name) do |*args, **kwargs, &block|
         previous_buffer_state = @_erbout
         @_erbout = Serbea::OutputBuffer.new
-        result = helper_block.call(*args, &block)
+        result = helper_block.call(*args, **kwargs, &block)
         @_erbout = previous_buffer_state
 
         result.is_a?(String) ? result.html_safe : result

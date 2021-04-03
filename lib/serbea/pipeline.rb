@@ -3,6 +3,11 @@ require "active_support/core_ext/object/blank"
 
 module Serbea
   class Pipeline
+    # Exec the pipes!
+    # @param template [String]
+    # @param locals [Hash]
+    # @param include_helpers [Module]
+    # @param kwargs [Hash]
     def self.exec(template, locals = {}, include_helpers: nil, **kwargs)
       anon = Class.new do
         include Serbea::Helpers
@@ -24,9 +29,12 @@ module Serbea
       pipeline_obj.output
     end
 
+    # @param processor [Proc]
     def self.output_processor=(processor)
       @output_processor = processor
     end
+
+    # @return [Proc]
     def self.output_processor
       @output_processor ||= lambda do |input|
         (!input.html_safe? && self.autoescape) ? ERB::Util.h(input) : input.html_safe

@@ -87,7 +87,7 @@ Selected? {{ has_selected_variant }}
 ----
 
 {% wow = capture do %}
-  This is {{ "amazing" + "!" | upcase }}
+  This is {{ "amazing" + "!" | upcase }} :)
 {% end.each_char.reduce("") do |newstr, c|
     newstr += " #{c}"
    end.strip %}

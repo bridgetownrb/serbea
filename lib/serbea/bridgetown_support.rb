@@ -3,9 +3,7 @@ require "bridgetown-core"
 
 module Bridgetown
   class SerbeaView < ERBView
-    alias_method :_erb_capture, :capture
     include Serbea::Helpers
-    alias_method :capture, :_erb_capture
 
     def partial(partial_name, options = {}, &block)
       options.merge!(options[:locals]) if options[:locals]
