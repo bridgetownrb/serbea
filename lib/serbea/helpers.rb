@@ -9,8 +9,7 @@ module Serbea
     def capture(*args)
       previous_buffer_state = @_erbout
       @_erbout = Serbea::OutputBuffer.new
-      yield(*args)
-      result = @_erbout
+      result = yield(*args)
       @_erbout = previous_buffer_state
 
       result&.html_safe
