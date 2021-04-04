@@ -82,7 +82,7 @@ layout: home
 {{ wow | prepend: "OMG! " }}
 ```
 
-Serbea lets us define helpers inside templates directly:
+Use `helper` (alias `macro`) to create ad-hoc filters:
 
 ```serb
 <p>
