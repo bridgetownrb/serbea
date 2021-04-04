@@ -157,7 +157,6 @@ class SerbView
       File.join(__dir__, "partials", "#{partial_name}.serb")
     ).render(self, options)
   end
-  alias_method :import, :partial
 
   def turbo_frame_tag(tag, &block)
     "<!-- #{tag}: #{capture(&block)} -->"

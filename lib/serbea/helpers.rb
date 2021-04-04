@@ -13,7 +13,7 @@ module Serbea
       result = @_erbout.presence || result
       @_erbout = previous_buffer_state
 
-      safe(result)
+      Serbea::OutputBuffer === result ? result.html_safe : result
     end
 
     def pipeline(context, value)
@@ -22,15 +22,18 @@ module Serbea
 
     def helper(name, &helper_block)
       self.class.define_method(name) do |*args, **kwargs, &block|
-        previous_buffer_state = @_erbout
-        @_erbout = Serbea::OutputBuffer.new
-        result = helper_block.call(*args, **kwargs, &block)
-        @_erbout = previous_buffer_state
-
-        result.is_a?(String) ? result.html_safe : result
+        capture { helper_block.call(*args, **kwargs, &block) }
       end
     end
     alias_method :macro, :helper
+
+    def import(*args, **kwargs, &block)
+      helper_names = %i(partial render)
+      available_helper = helper_names.find { |meth| respond_to?(meth) }
+      raise "Serbea error: no `render' helper is available in #{self.class}" unless available_helper
+      available_helper == :partial ? partial(*args, **kwargs, &block) : render(*args, **kwargs, &block)
+      nil
+    end
 
     def h(input)
       ERB::Util.h(input.to_s)

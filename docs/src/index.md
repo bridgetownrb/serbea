@@ -48,7 +48,19 @@ layout: home
 * Built-in frontmatter support. Now you can access the variables written into a top YAML block within your templates. In any Rails view, including layouts, you'll have access to the `@frontmatter` ivar which is a merged `HashWithDotAccess::Hash` with data from any part of the view tree (partials, pages, layout).
 
   For example, you could put `<title>{{ @frontmatter.title }}</title>` in your head partial, and then each page could define `title` frontmatter individually. You can even use Ruby string interpolation within the YAML so titles and other metadata can come from `t` language helpers.
+* Define macros/helpers which can be imported and used within Serbea templates.
 
+  ```serb
+  <!-- _macros.serb -->
+  {% macro :greet do |name:| %}
+    {{ name }}, my old friend!
+  {% end %}
+
+  <!-- tmpl.serb -->
+  {% import "macros" %}
+
+  Hello {{ greet(name: "darkness") }}
+  ```
 
 {% endraw %}
 
