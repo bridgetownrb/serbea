@@ -10,9 +10,10 @@ module Serbea
       previous_buffer_state = @_erbout
       @_erbout = Serbea::OutputBuffer.new
       result = yield(*args)
+      result = @_erbout.presence || result
       @_erbout = previous_buffer_state
 
-      result&.html_safe
+      safe(result)
     end
 
     def pipeline(context, value)
