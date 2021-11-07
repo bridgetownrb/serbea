@@ -1,3 +1,4 @@
+require "set"
 require "active_support/core_ext/string/output_safety"
 require "active_support/core_ext/object/blank"
 
@@ -68,38 +69,21 @@ module Serbea
       @value = value
     end
 
-    # TODO: clean this up somehow and still support Ruby 2.5..3.0!
     def filter(name, *args, **kwargs)
       if @value.respond_to?(name) && !self.class.value_methods_denylist.include?(name)
         if args.last.is_a?(Proc)
           real_args = args.take(args.length - 1)
           block = args.last
-          unless kwargs.empty?
-            @value = @value.send(name, *real_args, **kwargs, &block)
-          else
-            @value = @value.send(name, *real_args, &block)
-          end
+          @value = @value.send(name, *real_args, **kwargs, &block)
         else
-          unless kwargs.empty?
-            @value = @value.send(name, *args, **kwargs)
-          else
-            @value = @value.send(name, *args)
-          end
+          @value = @value.send(name, *args, **kwargs)
         end
       elsif @context.respond_to?(name)
-        unless kwargs.empty?
-          @value = @context.send(name, @value, *args, **kwargs)
-        else
-          @value = @context.send(name, @value, *args)
-        end
+        @value = @context.send(name, @value, *args, **kwargs)
       elsif @binding.local_variables.include?(name)
         var = @binding.local_variable_get(name)
         if var.respond_to?(:call)
-          unless kwargs.empty?
-            @value = var.call(@value, *args, **kwargs)
-          else
-            @value = var.call(@value, *args)
-          end
+          @value = var.call(@value, *args, **kwargs)
         else
           "Serbea warning: Filter #{name} does not respond to call".tap do |warning|
             self.class.raise_on_missing_filters ? raise(warning) : STDERR.puts(warning)

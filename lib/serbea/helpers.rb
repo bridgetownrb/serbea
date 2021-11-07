@@ -30,7 +30,7 @@ module Serbea
     def import(*args, **kwargs, &block)
       helper_names = %i(partial render)
       available_helper = helper_names.find { |meth| respond_to?(meth) }
-      raise "Serbea error: no `render' helper is available in #{self.class}" unless available_helper
+      raise "Serbea Error: no `render' or `partial' helper available in #{self.class}" unless available_helper
       available_helper == :partial ? partial(*args, **kwargs, &block) : render(*args, **kwargs, &block)
       nil
     end
