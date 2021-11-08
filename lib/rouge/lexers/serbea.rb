@@ -9,6 +9,7 @@ module Rouge
       desc "Embedded Ruby Serbea template files"
 
       tag 'serb'
+      aliases 'serbea'
 
       filenames '*.serb'
 
