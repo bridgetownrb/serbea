@@ -23,23 +23,32 @@ layout: home
 * Filters! Frontmatter!! Pipeline operators!!! 🤩
 * The filters accessible within Serbea templates are either traditional helpers (where the variable gets passed as the first argument) or _instance methods of the variable itself_. So you can build extremely expressive pipelines that take advantage of the code you already know and love.
 
-  For example, in Rails you could write: `{{ "My Link" | sub: "Link", "Page" | link_to: route_path }}`.
+  For example, in Rails you could write:
+  
+  ```serbea
+  {{ "My Link" | sub: "Link", "Page" | link_to: route_path }}
+  ```
+
 * The `Serbea::Pipeline.exec` method lets you pass a pipeline template in, along with an optional input value or included helpers module, and you'll get the output as a object of any type (not converted to a string like in traditional templates). 
 
   For example:
-  
-  `Serbea::Pipeline.exec %( arr |> map: ->(i) { i * 10 } ), arr: [1,2,3]`
-  
+
+  ```serbea
+  Serbea::Pipeline.exec %( arr |> map: ->(i) { i * 10 } ), arr: [1,2,3]
+  ```
+
   will return:
-  
-  `[10, 20, 30]`
+
+  ```serbea
+  [10, 20, 30]
+  ```
 
 * Serbea will HTML autoescape variables by default within pipeline (`{{ }}`) tags. Use the `safe` / `raw` or `escape` / `h` filters to control escaping on output.
 * Directives apply handy shortcuts that modify the template at the syntax level before processing through Ruby.
 
-  `{%@ %}` is a shortcut for rendering either string-named partials (`render "tmpl"`) or object instances (`render MyComponent.new`). And in Rails, you can use new Turbo Stream directives for extremely consise templates:
+  `{%@ %}` is a shortcut for rendering either string-named partials (`render "tmpl"`) or object instances (`render MyComponent.new`). And in Rails, you can use Turbo Stream directives for extremely consise templates:
 
-  ```serb
+  ```serbea
   {%@remove "timeline-read-more" %}
   {%@append "timeline" do %}
     {%@ partial: "posts", formats: [:html] %}
@@ -170,6 +179,9 @@ The answer of course is: **{{ @array_length.length }}**
 
 ### Installation and Usage
 
+{:style="text-align:center"}
+_(For Rails and Bridgetown scenarios, see below.)_
+
 Simply add the Serbea gem to your `Gemfile`:
 
 ```
@@ -181,8 +193,6 @@ or install standalone:
 ```
 gem install serbea
 ```
-
-If you're using [Bridgetown](https://www.bridgetownrb.com), make sure it's included in the `bridgetown_plugins` group.
 
 Serbea templates are typically saved using a `.serb` extension. If you use VS Code as your editor, there is a [VS Code extension](https://marketplace.visualstudio.com/items?itemName=whitefusion.serbea) to enable Serbea syntax highlighting as well as palette commands to convert selected ERB syntax to Serbea.
 
@@ -204,36 +214,11 @@ You'll likely want to bind to a dedicated view object instead of `self` as in th
 Serbea helpers include `pipeline` which faciliates the `{{ }}` template syntax, `capture`, `helper`, `safe`, `escape`, and `assign_to`.
 {% endraw %}
 
-### Rails Support
-
-Serbea fully supports Rails (tested with Rails 6), and even includes special directives for Turbo Streams as highlighted above.
-
-Simply use the `.serb` extension wherever you would use `.erb` normally. You can freely mix 'n' match Serbea templates with other template engines, so for instance `index.html.erb` and `show.html.serb` can live side-by-side.
-
-**Note:** if you use a Serbea template as a _layout_, you may encounter some subtle rendering issues with ERB page templates that use the layout. It is recommended you use Serbea for layouts only if you intend to standardize on Serbea for your application.
-
-**Upgrade your helpers!** While you can use the same kind of syntax for helpers you may be accustomed to in ERB, using the pipeline syntax can be far more enjoyable and better express intent. For example, instead of confusing nested method calls like this:
-
-{% raw %}
-```erb
-Here's a <%= link_to(highlight("  link for you  ".strip.titleize, "you"), other_page_path) %>.
-```
-
-You could instead write this:
-
-```serb
-Here's a {{ "  link for you  " | strip | titleize | highlight: "you" | link_to: other_page_path }}
-```
-
-which is _far_ easier to parse visually and less likely to cause bugs due to nesting errors.
-
-**Stay Safe!** In pipelines, Serbea uses the same safe escaping logic you've experienced with ERB. So if you were to put `{{ "<p>Aha!</p>" }}` in a template, you don't get an HTML paragraph, you get the literal characters of the p tags. You would have to use the `safe` (aliased `raw`) filter in order to get working HTML output. _However_, that is NOT the case with expressions. `{%= "<p>Bingo!</p>" %}` outputs that text verbatim and you get a valid HTML paragraph. So use expressions sparingly and only in cases where you know the values have already been cleansed (e.g., rendering partials or components, using form helpers, yielding in layouts, etc.). Alternatively, you can use the `escape` (aliased `h`) helper: `{%= escape "<p>Bingo!</p>" %}`.
-
-{% endraw %}
-
 ### Bridgetown Support
 
-Serbea fully supports [Bridgetown](https://www.bridgetownrb.com). In fact, Serbea is an excellent upgrade from Liquid as the syntax initially looks familar, yet it enbles the full power of real Ruby in your templates.
+If you're using [Bridgetown 1.0](https://edge.bridgetownrb.com), Serbea is automatically included! [See Sebea-specific documentation here.](https://edge.bridgetownrb.com/docs/erb-and-beyond#serbea)
+
+Serbea is an excellent upgrade from Liquid as the syntax initially looks familar, yet it enbles the full power of real Ruby in your templates.
 
 Out of the box, you can name pages and partials with a `.serb` extension. But for even more flexibility, you can add `template_engine: serbea` to your `bridgetown.config.yml` configuration. This will default all pages and documents to Serbea unless you specifically use front matter to choose a different template engine (or use an extension such as `.liquid` or `.erb`).
 
@@ -270,6 +255,36 @@ layout: bulmatown/post
 ```
 {% endraw %}
 
+### Rails Support
+
+To use in Rails, run:
+
+`bundle add serbea-rails`
+
+Serbea fully supports Rails (tested with Rails 6), and even includes special directives for Turbo Streams as highlighted above.
+
+Simply use the `.serb` extension wherever you would use `.erb` normally. You can freely mix 'n' match Serbea templates with other template engines, so for instance `index.html.erb` and `show.html.serb` can live side-by-side.
+
+**Note:** if you use a Serbea template as a _layout_, you may encounter some subtle rendering issues with ERB page templates that use the layout. It is recommended you use Serbea for layouts only if you intend to standardize on Serbea for your application.
+
+**Upgrade your helpers!** While you can use the same kind of syntax for helpers you may be accustomed to in ERB, using the pipeline syntax can be far more enjoyable and better express intent. For example, instead of confusing nested method calls like this:
+
+{% raw %}
+```erb
+Here's a <%= link_to(highlight("  link for you  ".strip.titleize, "you"), other_page_path) %>.
+```
+
+You could instead write this:
+
+```serb
+Here's a {{ "  link for you  " | strip | titleize | highlight: "you" | link_to: other_page_path }}
+```
+
+which is _far_ easier to parse visually and less likely to cause bugs due to nesting errors.
+
+**Stay Safe!** In pipelines, Serbea uses the same safe escaping logic you've experienced with ERB. So if you were to put `{{ "<p>Aha!</p>" }}` in a template, you don't get an HTML paragraph, you get the literal characters of the p tags. You would have to use the `safe` (aliased `raw`) filter in order to get working HTML output. _However_, that is NOT the case with expressions. `{%= "<p>Bingo!</p>" %}` outputs that text verbatim and you get a valid HTML paragraph. So use expressions sparingly and only in cases where you know the values have already been cleansed (e.g., rendering partials or components, using form helpers, yielding in layouts, etc.). Alternatively, you can use the `escape` (aliased `h`) helper: `{%= escape "<p>Bingo!</p>" %}`.
+
+{% endraw %}
 
 ### How Pipelines Work Under the Hood
 
