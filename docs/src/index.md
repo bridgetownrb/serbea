@@ -271,7 +271,7 @@ Simply use the `.serb` extension wherever you would use `.erb` normally. You can
 
 {% raw %}
 ```erb
-Here's a <%= link_to(highlight("  link for you  ".strip.titleize, "you"), other_page_path) %>.
+Here's a <%= link_to(highlight("  link for you  ".strip.titleize, "you"), other_page_path) %>
 ```
 
 You could instead write this:
