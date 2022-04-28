@@ -216,7 +216,7 @@ Serbea helpers include `pipeline` which faciliates the `{{ }}` template syntax, 
 
 ### Bridgetown Support
 
-If you're using [Bridgetown 1.0](https://edge.bridgetownrb.com), Serbea is automatically included! [See Serbea-specific documentation here.](https://edge.bridgetownrb.com/docs/template-engines/erb-and-beyond#serbea)
+If you're using [Bridgetown 1.0](https://www.bridgetownrb.com), Serbea is automatically included! [See Serbea-specific documentation here.](https://www.bridgetownrb.com/docs/template-engines/erb-and-beyond#serbea)
 
 Serbea is an excellent upgrade from Liquid as the syntax initially looks familar, yet it enbles the full power of real Ruby in your templates.
 
