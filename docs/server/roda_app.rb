@@ -3,13 +3,12 @@
 # server, but you can also run it in production for fast, dynamic applications.
 #
 # Learn more at: http://roda.jeremyevans.net
+class RodaApp < Roda
+  plugin :bridgetown_server
 
-class RodaApp < Bridgetown::Rack::Roda
-  # Add Roda configuration here if needed
-
-  route do
+  route do |r|
     # Load all the files in server/routes
     # see hello.rb.sample
-    Bridgetown::Rack::Routes.start! self
+    r.bridgetown
   end
 end

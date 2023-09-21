@@ -167,10 +167,6 @@ class SerbView
   end
 end
 
-
-#simple_template = "Hi {{ 'there' }}"
-#tmpl = Tilt::SerbeaTemplate.new { simple_template }
-
 Serbea::TemplateEngine.front_matter_preamble = "self.pagedata = YAML.load"
 Serbea::TemplateEngine.directive :form, ->(code, buffer) do
   model_name, space, params = code.lstrip.partition(%r(\s)m)
@@ -199,7 +195,6 @@ Serbea::TemplateEngine.directive :_, ->(code, buffer) do
   buffer << code
   buffer << " %}"
 end
-#Serbea::Pipeline.raise_on_missing_filters = true
 
 tmpl = Tilt.new(File.join(__dir__, "template.serb"))
 
@@ -230,4 +225,46 @@ if output.strip != previous_output.strip
   raise "Output does not match! Saved to bad_output.txt"
 end
 
-puts "\nYay! Test passed."
+class AnotherClass
+  def self.operate_on_value(value)
+    "val #{value} !!"
+  end
+end
+
+class PipelineTemplateTest
+  include Serbea::Pipeline::Helper
+
+  def output
+    pipe("Hello world") { upcase | split(" ") | value(->{ _1 | ["YO"] }) | test_join(", ") }
+  end
+
+  def test_multiline(input_value)
+    pipe input_value do
+      transform_this_way
+      value ->{ AnotherClass.operate_on_value _1 } # return a new value based on an outside process
+      now_we_are_done!
+    end
+  end
+
+  def transform_this_way(input)
+    input.join("=")
+  end
+
+  def now_we_are_done!(input)
+    input.upcase
+  end
+
+  def test_join(input, delimeter)
+    input.join(delimeter)
+  end
+end
+
+pipeline_output = PipelineTemplateTest.new.output
+raise "Pipeline broken! #{pipeline_output}" unless
+  pipeline_output == "HELLO, WORLD, YO"
+
+pipeline_output = PipelineTemplateTest.new.test_multiline(["a", 123])
+raise "Multi-line pipeline broken! #{pipeline_output}" unless
+  pipeline_output == "VAL A=123 !!"
+
+puts "\nYay! Tests passed."

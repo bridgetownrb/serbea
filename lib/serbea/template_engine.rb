@@ -188,7 +188,7 @@ module Serbea
                 buff << "{% %}\n" # preserve original directive line length
               end
             else
-              raise "Handler for Serbea template directive `#{$1}' not found"
+              raise Serbea::Error, "Handler for Serbea template directive `#{$1}' not found"
             end
           else
             buff << "{% end %}"

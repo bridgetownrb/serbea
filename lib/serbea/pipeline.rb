@@ -4,6 +4,17 @@ require "active_support/core_ext/object/blank"
 
 module Serbea
   class Pipeline
+    # If you include this in any regular Ruby template environment (say ERB),
+    # you can then use Serbea-style pipeline code within the block, e.g.
+    #
+    # `pipe "Hello world" do upcase | split(" ") | join(", ") end`
+    # => `HELLO, WORLD`
+    module Helper
+      def pipe(input = nil, &blk)
+        Pipeline.new(binding, input).tap { _1.instance_exec(&blk) }.value
+      end
+    end
+
     # Exec the pipes!
     # @param template [String]
     # @param locals [Hash]
@@ -85,13 +96,13 @@ module Serbea
         if var.respond_to?(:call)
           @value = var.call(@value, *args, **kwargs)
         else
-          "Serbea warning: Filter #{name} does not respond to call".tap do |warning|
-            self.class.raise_on_missing_filters ? raise(warning) : STDERR.puts(warning)
+          "Serbea warning: Filter '#{name}' does not respond to call".tap do |warning|
+            self.class.raise_on_missing_filters ? raise(Serbea::FilterMissing, warning) : STDERR.puts(warning)
           end
         end
       else
-        "Serbea warning: Filter not found: #{name}".tap do |warning|
-          self.class.raise_on_missing_filters ? raise(warning) : STDERR.puts(warning)
+        "Serbea warning: Filter `#{name}' not found".tap do |warning|
+          self.class.raise_on_missing_filters ? raise(Serbea::FilterMissing, warning) : STDERR.puts(warning)
         end
       end
 
@@ -100,6 +111,25 @@ module Serbea
 
     def to_s
       self.class.output_processor.call(@value.is_a?(String) ? @value : @value.to_s)
+    end
+  
+    def |(*)
+      self
+    end
+
+    def method_missing(...)
+      filter(...)
+    end
+
+    def value(callback = nil)
+      return @value unless callback
+
+      @value = if callback.is_a?(Proc)
+                 callback.(@value)
+               else
+                 callback
+               end
+      self
     end
   end
 end

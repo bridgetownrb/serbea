@@ -70,6 +70,22 @@ p, ul li, ol li {
   margin-bottom: 1.5rem;
 }
 
+main > aside {
+  background: #ffffcc;
+  padding: 1.5rem;
+  border: 1px solid #eee;
+  box-shadow: 0px 5px 12px -4px #eee;
+  border-radius: 8px;
+
+  *:first-child {
+    margin-top: 0;
+  }
+
+  *:last-child {
+    margin-bottom: 0;
+  }
+}
+
 div.highlighter-rouge {
   margin: 1.5rem 0;
   width: 100%;

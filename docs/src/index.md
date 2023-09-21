@@ -9,6 +9,12 @@ layout: home
 
 **Serbea**. Finally, something to crow(n) about. _Le roi est mort, vive le roi!_
 
+<aside markdown="block">
+
+==New in Serbea 2.0!== You can now add "pipeline operator" functionality to _any_ Ruby template or class! [Check out the documentation below.](#add-pipelines-to-any-ruby-templates)
+
+</aside>
+
 ### Table of Contents
 {:.no_toc}
 * …
@@ -43,10 +49,11 @@ layout: home
   [10, 20, 30]
   ```
 
+* Alternatively, ==now in Serbea 2.0== you can execute pipelines in plain ol' Ruby within any template or class! [See documentation below.](#add-pipelines-to-any-ruby-templates)
 * Serbea will HTML autoescape variables by default within pipeline (`{{ }}`) tags. Use the `safe` / `raw` or `escape` / `h` filters to control escaping on output.
 * Directives apply handy shortcuts that modify the template at the syntax level before processing through Ruby.
 
-  `{%@ %}` is a shortcut for rendering either string-named partials (`render "tmpl"`) or object instances (`render MyComponent.new`). And in Rails, you can use Turbo Stream directives for extremely consise templates:
+  `{%@ %}` is a shortcut for rendering either string-named partials (`render "tmpl"`) or object instances (`render MyComponent.new`). And in Rails, you can use Turbo Stream directives for extremely concise templates:
 
   ```serbea
   {%@remove "timeline-read-more" %}
@@ -222,7 +229,7 @@ Serbea is an excellent upgrade from Liquid as the syntax initially looks familar
 
 Out of the box, you can name pages and partials with a `.serb` extension. But for even more flexibility, you can add `template_engine: serbea` to your `bridgetown.config.yml` configuration. This will default all pages and documents to Serbea unless you specifically use front matter to choose a different template engine (or use an extension such as `.liquid` or `.erb`).
 
-Here's an abreviated example of what the Post layout template looks like on the [RUBY3.dev](https://www.ruby3.dev) blog:
+Here's an abreviated example of what the Post layout template looks like on the [Fullstack Ruby](https://www.fullstackruby.dev) blog:
 
 {% raw %}
 ```serb
@@ -286,6 +293,102 @@ which is _far_ easier to parse visually and less likely to cause bugs due to nes
 
 {% endraw %}
 
+### Add Pipelines to Any Ruby Templates
+
+New in Serbea 2.0, you can use a pipeline operator (`|`) within a `pipe` block to construct a series of expressions which continually operate on the latest state of the base value.
+
+All you have to do is include `Serbea::Pipeline::Helper` inside of any Ruby class or template environment (aka ERB).
+
+Here's a simple example:
+
+```ruby
+class PipelineExample
+  include Serbea::Pipeline::Helper
+
+  def output
+    pipe("Hello world") { upcase | split(" ") | test_join(", ") }
+  end
+
+  def test_join(input, delimeter)
+    input.join(delimeter)
+  end
+end
+
+PipelineExample.new.output.value # => HELLO, WORLD
+```
+
+As you can see, a number of interesting things are happening here. First, we're kicking off the pipeline using a string value. This then lets us access the string's `upcase` and `split` methods. Once the string has become an array, we pipe that into our custom `test_join` method where we can call the array value's `join` method to convert it back to a string. Finally, we return the output value of the pipeline.
+
+Like in native Serbea template pipelines, every expression in the pipeline will either call a method on the value itself, or a filter-style method that's available within the calling object. As you might expect in, say, an ERB template, all of the helpers are available as pipeline filters. In Rails, for example:
+
+```erb
+Link: <%= pipe("nav.page_link") { t | link_to(my_page_path) } %>
+```
+
+This is roughly equivalent to:
+
+```erb
+Link: <%= link_to(t("nav.page_link"), my_page_path) %>
+```
+
+The length of the pipe code is slightly longer, but it's easier to follow the order of operations:
+
+1. First, you start with the translation key.
+2. Second, you translate that into official content.
+3. Third, you pass that content to `link_to` along with a URL helper.
+
+There are all sorts of uses for a pipeline, not just in templates. You could construct an entire data flow with many transformation steps. And because the pipeline operator `|` is actually optional when using a multi-line block, you can just write a series of simple Ruby statements:
+
+```ruby
+def transform(input_value)
+  pipe input_value do
+    transform_this_way
+    transform_that_way
+    add_more_data(more_data)
+    convert_to_whatever # maybe this is called on the value object itself
+    value ->{ AnotherClass.operate_on_value _1 } # return a new value from outside processing
+    now_we_are_done!
+  end
+end
+
+def transform_this_way(input) = ...
+def transform_that_way(input) = ...
+def add_more_data(input, data) = ...
+def now_we_are_done!(input) = ...
+
+transform([1,2,3])
+```
+
 ### How Pipelines Work Under the Hood
 
-Documentation forthcoming!
+In Serbea templates, code which looks like this:
+
+{% raw %}
+```serb
+{{ data | method_call | some_filter: 123 }}
+```
+{% endraw %}
+
+gets translated to this:
+
+```ruby
+pipeline(data).filter(:method_call).filter(:some_filter, 123)
+```
+
+In plain Ruby, `method_missing` is used to proxy method calls along to `filter`, so:
+
+```ruby
+pipe(data) { method_call | some_filter(123) }
+```
+
+is equivalent to:
+
+```ruby
+pipe(data) { filter(:method_call); filter(:some_filter, 123) }
+```
+
+Pipelines "inherit" their calling context by using Ruby's `binding` feature. That's how they know how to call the methods which are available within the caller.
+
+Another interesting facet of Serbea pipelines is that they're forgiving by default. If a filter can't be found (either there's no method available to call the object itself nor is there a separate helper method), it will log a warning to STDERR and continue on. This is to make the syntax feel a bit more like HTML and CSS where you can make a mistake or encounter an unexpected error condition yet not crash the entire application.
+
+If you do want to crash your entire application (😜), you can set the configuration option: `Serbea::Pipeline.raise_on_missing_filters = true`. This will raise a `Serbea::FilterMissing` error if a filter can't be found.

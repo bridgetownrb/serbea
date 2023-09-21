@@ -1,6 +1,12 @@
 require "tilt"
 require "tilt/erubi"
 
+module Serbea
+  class Error < StandardError; end
+
+  class FilterMissing < Error; end
+end
+
 require "serbea/helpers"
 require "serbea/pipeline"
 require "serbea/template_engine"
