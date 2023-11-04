@@ -1,6 +1,4 @@
 require "set"
-require "active_support/core_ext/string/output_safety"
-require "active_support/core_ext/object/blank"
 
 module Serbea
   class Pipeline
@@ -36,7 +34,7 @@ module Serbea
       full_template = "{{ #{template} | assign_to: :output }}"
 
       tmpl = Tilt::SerbeaTemplate.new { full_template }
-      tmpl.render(pipeline_obj, locals.presence || kwargs)
+      tmpl.render(pipeline_obj, locals.empty? ? kwargs : locals)
 
       pipeline_obj.output
     end
@@ -49,7 +47,7 @@ module Serbea
     # @return [Proc]
     def self.output_processor
       @output_processor ||= lambda do |input|
-        (!input.html_safe? && self.autoescape) ? ERB::Util.h(input) : input.html_safe
+        (!input.html_safe? && self.autoescape) ? Erubi.h(input) : input.html_safe
       end
     end
 

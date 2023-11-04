@@ -115,7 +115,7 @@ class SerbView
     processed_attrs = ""
     attrs[0].each do |key, value|
       processed_attrs << " #{key}=\"#{value}\""
-    end if attrs.present?
+    end unless attrs.empty?
 
     "<#{tag_name}#{processed_attrs}>#{content}</#{tag_name}>"
   end

@@ -1,4 +1,15 @@
-require "active_support/core_ext/string/output_safety"
+unless "".respond_to?(:html_safe)
+  # The simplest HTML safety "polyfill" around
+  class String
+    def html_safe
+      self.class.new(self).tap { _1.instance_variable_set(:@html_safe, true) }
+    end
+
+    def html_safe?
+      instance_variable_get(:@html_safe) == true
+    end
+  end
+end
 
 module Serbea
   module Helpers
@@ -10,7 +21,7 @@ module Serbea
       previous_buffer_state = @_erbout
       @_erbout = Serbea::OutputBuffer.new
       result = yield(*args)
-      result = @_erbout.presence || result
+      result = @_erbout.empty? ? result : @_erbout
       @_erbout = previous_buffer_state
 
       Serbea::OutputBuffer === result ? result.html_safe : result
@@ -36,7 +47,7 @@ module Serbea
     end
 
     def h(input)
-      ERB::Util.h(input.to_s)
+      Erubi.h(input.to_s)
     end
     alias_method :escape, :h
 
