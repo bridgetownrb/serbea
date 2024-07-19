@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.0
+
+- Add functionality to purge certain `Object`-based method pollution which interferes with the workings of Serbea's `Pipeline` in pure Ruby.
+- Ruby 3.1 is now the minimum required version.
+
 ## 2.1.0
 
 - Remove Active Support as a dependency

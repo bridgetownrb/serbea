@@ -72,7 +72,27 @@ module Serbea
       @value_methods_denylist ||= Set.new
     end
 
+    def self.purge_class_pollution
+      @pollution_purged ||= begin
+        polluted_methods_list.each do |name|
+          define_method name do |*args, **kwargs|
+            filter(name, *args, **kwargs)
+          end
+        end
+
+        true
+      end
+    end
+
+    def self.polluted_method(name)
+      polluted_methods_list.merge Array(name)
+    end
+    def self.polluted_methods_list
+      @polluted_methods_list ||= Set.new(%i(select to_json))
+    end
+
     def initialize(binding, value)
+      self.class.purge_class_pollution
       @binding = binding
       @context = binding.receiver
       @value = value

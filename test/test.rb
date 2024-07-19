@@ -246,6 +246,14 @@ class PipelineTemplateTest
     end
   end
 
+  def test_json_filter
+    pipe({a: 1, b: "2"}) do
+      select proc { _1 == :a }
+      to_h
+      to_json
+    end
+  end
+
   def transform_this_way(input)
     input.join("=")
   end
@@ -266,5 +274,8 @@ raise "Pipeline broken! #{pipeline_output}" unless
 pipeline_output = PipelineTemplateTest.new.test_multiline(["a", 123])
 raise "Multi-line pipeline broken! #{pipeline_output}" unless
   pipeline_output == "VAL A=123 !!"
+
+pipeline_output = PipelineTemplateTest.new.test_json_filter
+raise "Unpolluted pipeline methods not working! #{pipeline_output}" unless pipeline_output == '{"a":1}'
 
 puts "\nYay! Tests passed."

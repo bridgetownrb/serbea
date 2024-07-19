@@ -392,3 +392,7 @@ Pipelines "inherit" their calling context by using Ruby's `binding` feature. Tha
 Another interesting facet of Serbea pipelines is that they're forgiving by default. If a filter can't be found (either there's no method available to call the object itself nor is there a separate helper method), it will log a warning to STDERR and continue on. This is to make the syntax feel a bit more like HTML and CSS where you can make a mistake or encounter an unexpected error condition yet not crash the entire application.
 
 If you do want to crash your entire application (😜), you can set the configuration option: `Serbea::Pipeline.raise_on_missing_filters = true`. This will raise a `Serbea::FilterMissing` error if a filter can't be found.
+
+**Note:** if you find that a certain method doesn't work within a pipeline when writing plain Ruby, because that method has polluted the global `Object` set of instance methods, you can call `Serbea::Pipeline.polluted_method(:method_name_here)` to strip that off and allow filtering to work. It also accepts an array of symbols.
+
+**Note:** if you find that a certain filter is being called as a method directly on the value object, rather than a defined filter method itself, you can add that method name to a deny list via `Serbea::Pipeline.deny_value_method(:method_name_here)`. It also accepts an array of symbols.
